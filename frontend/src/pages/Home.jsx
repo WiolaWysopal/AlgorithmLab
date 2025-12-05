@@ -15,7 +15,7 @@ function Home() {
           </Link>
         </div>
 
-        {/* Możesz dodać kolejne kafelki */}
+        {/* Tu można dodać kolejne kafelki */}
         <div className="col-md-3">
           <div className="card shadow text-center p-4 bg-secondary text-white">
             <h4>Soon...</h4>
