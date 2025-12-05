@@ -6,7 +6,14 @@ function App() {
   return (
     <Router>
       <nav className="navbar navbar-dark bg-dark w-100">
-        <h1 className="text-center w-100 text-white m-0 py-3 display-5">
+        <h1 className="text-center w-100 display-5"
+          style={{
+            color: "white",
+            padding: "1rem 0",
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: 600,
+            letterSpacing: "2px"
+          }}>
           AlgorithmLab
         </h1>
       </nav>
