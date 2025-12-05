@@ -23,7 +23,7 @@ function InsertionSortVisualizer() {
       const timer = setTimeout(() => {
         setArray(steps[currentStep]);
         setCurrentStep(currentStep + 1);
-      }, 500);
+      }, 300); // krótszy czas = płynniejsze
       return () => clearTimeout(timer);
     }
   }, [steps, currentStep]);
@@ -33,15 +33,18 @@ function InsertionSortVisualizer() {
       <div className="card p-4 shadow">
         <h2 className="text-center mb-4">Insertion Sort Visualizer</h2>
 
-        <div className="d-flex justify-content-center gap-2 mb-4">
+        <div className="d-flex justify-content-center gap-3 mb-4">
           {array.map((value, idx) => (
             <div
               key={idx}
               className="bg-primary text-white d-flex justify-content-center align-items-end"
               style={{
-                height: `${value * 20}px`,
-                width: "40px",
+                height: `${value * 25}px`,
+                width: "45px",
                 fontWeight: "bold",
+                borderRadius: "8px",       // ZAOKRĄGLENIE
+                boxShadow: "0 4px 8px rgba(0,0,0,0.25)", // CIEŃ
+                transition: "height 0.3s ease-in-out",   // ANIMACJA
               }}
             >
               {value}
