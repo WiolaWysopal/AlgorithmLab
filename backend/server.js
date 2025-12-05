@@ -22,6 +22,18 @@ app.post("/sort/insertion", (req, res) => {
   res.json(result);
 });
 
+// przykładowy endpoint z opisem
+// app.get("/description/insertion", (req, res) => {
+//   // na początek tekst można trzymać w pamięci lub w zmiennej
+//   const description = `
+//     Insertion Sort is a simple sorting algorithm that builds the final sorted array
+//     one item at a time. It is much less efficient on large lists than more advanced algorithms
+//     such as quicksort, heapsort, or merge sort.
+//   `;
+//   res.json({ text: description });
+// });
+
+
 app.listen(5000, () => {
   console.log("Backend works at http://localhost:5000");
 });
