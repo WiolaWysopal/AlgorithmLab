@@ -108,10 +108,13 @@ function InsertionSortVisualizer() {
 
         {/* --- OPIS ALGORYTMU --- */}
         {description && (
-          <div className="mb-4">
-            <p className="text-muted">{description}</p>
+          <div className="mb-2">
+            <p className="text-secondary fw-medium fst-italic">
+              {description}
+            </p>
           </div>
         )}
+
 
         {/* --- INPUT + PRZYCISK --- */}
         <div className="mb-4">
