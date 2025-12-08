@@ -1,29 +1,66 @@
 import { useState, useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+// --- KONFIGURACJA SUPABASE Z .ENV ---
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function InsertionSortVisualizer() {
   const [array, setArray] = useState([5, 2, 4, 3, 1]);
   const [inputValue, setInputValue] = useState("");
   const [steps, setSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [description, setDescription] = useState(""); // opis algorytmu
 
   // --- WYLICZANIE SKALOWANEJ WYSOKOŚCI ---
   const minValue = Math.min(...array);
   const maxValue = Math.max(...array);
-
-  const minHeight = 30;  
-  const maxHeight = 200; 
-
+  const minHeight = 30;
+  const maxHeight = 200;
   const getHeight = (value) => {
     if (maxValue === minValue) return (minHeight + maxHeight) / 2;
-
     const normalized = (value - minValue) / (maxValue - minValue);
     return minHeight + normalized * (maxHeight - minHeight);
   };
+  const getBarWidth = () => Math.min(60, Math.max(15, 300 / array.length));
+
+  // --- POBIERANIE OPISU Z SUPABASE (BEZ .single()) ---
+  useEffect(() => {
+  const fetchDescription = async () => {
+    try {
+      // pobieramy description i id, aby mieć pewność, że jest w wyniku
+      const { data, error } = await supabase
+        .from("algorithms")
+        .select("id, description, name")
+        .eq("name", "InsertionSort");
+
+      if (error) {
+        console.error("Error fetching description:", error.message);
+        setDescription("Brak opisu w bazie");
+        return;
+      }
+
+      if (data && data.length > 0) {
+        console.log("Fetched data from Supabase:", data);
+        setDescription(data[0].description);
+      } else {
+        console.warn("No data found for InsertionSort");
+        setDescription("Brak opisu w bazie");
+      }
+    } catch (err) {
+      console.error("Unexpected error fetching description:", err);
+      setDescription("Brak opisu w bazie");
+    }
+  };
+
+  fetchDescription();
+}, []);
+
 
   // --- USTAWIANIE WŁASNEJ TABLICY ---
   const handleSetArray = () => {
     if (!inputValue.trim()) return;
-
     const parsed = inputValue
       .split(",")
       .map((num) => Number(num.trim()))
@@ -55,38 +92,37 @@ function InsertionSortVisualizer() {
   // --- WIZUALIZACJA KROKÓW ---
   useEffect(() => {
     if (steps.length === 0) return;
-
     if (currentStep < steps.length) {
       const timer = setTimeout(() => {
         setArray(steps[currentStep]);
         setCurrentStep(currentStep + 1);
       }, 300);
-
       return () => clearTimeout(timer);
     }
   }, [steps, currentStep]);
-
-  // --- RESPONSYWNA SZEROKOŚĆ KAFELKA ---
-  const getBarWidth = () => {
-    // max 60px, minimalnie ok. 15px gdy dużo elementów
-    return Math.min(60, Math.max(15, 300 / array.length));
-  };
 
   return (
     <div className="container mt-4">
       <div className="card p-4 shadow">
         <h2 className="text-center mb-4">Insertion Sort Visualizer</h2>
 
-        {/* --- INPUT + PRZYCISK (RESPONSYWNE) --- */}
-        <div className="mb-4">
-          <label className="form-label fw-bold">Enter numbers (e.g. 5,2,4,3,1):</label>
+        {/* --- OPIS ALGORYTMU --- */}
+        {description && (
+          <div className="mb-4">
+            <p className="text-muted">{description}</p>
+          </div>
+        )}
 
-          {/* input-group nie lubi wrap, więc robimy responsywny układ ręcznie */}
+        {/* --- INPUT + PRZYCISK --- */}
+        <div className="mb-4">
+          <label className="form-label fw-bold">
+            Enter numbers (e.g. 5,2,4,3,1):
+          </label>
           <div className="d-flex flex-column flex-sm-row gap-2">
             <input
               type="text"
               className="form-control w-75"
-              placeholder="np. 10, 3, 7, 1"
+              placeholder="e.g. 10, 3, 7, 1"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
             />
@@ -97,10 +133,7 @@ function InsertionSortVisualizer() {
         </div>
 
         {/* --- KAFELKI (PEŁNA RESPONSYWNOŚĆ) --- */}
-        <div
-          className="d-flex justify-content-center gap-3 mb-4 align-items-end"
-          style={{ flexWrap: "wrap" }}  // <-- kluczowe
-        >
+        <div className="d-flex justify-content-center gap-3 mb-4 align-items-end flex-wrap">
           {array.map((value, idx) => (
             <div
               key={idx}
