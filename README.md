@@ -64,6 +64,38 @@ The backend provides `REST` endpoints for handling sorting and descriptions:
   - Will return a text description of the algorithm
   - Can be later connected to a database (Supabase, MongoDB Atlas, etc.)
 
+## ⚡ Supabase Integration
+
+This project uses [Supabase](https://supabase.com/) as a backend to store algorithm descriptions. The `InsertionSortVisualizer` component fetches the description of the algorithm from the Supabase database and displays it above the input field.
+
+### Setup
+
+1. Create a Supabase project and a table called `algorithms` with columns:
+   - `id` (uuid or serial)
+   - `name` (text)
+   - `description` (text)
+   - `category` (text)
+
+2. Insert data into the table, for example:
+
+```sql
+INSERT INTO public.algorithms (id, name, description, category)
+VALUES ('1', 'InsertionSort', 'Insertion Sort is a simple way to sort a list of numbers...', 'Sorting');
+
+3. Enable Row Level Security (RLS) and create a policy to allow public read access:
+
+```sql
+create policy "Allow read for everyone" on public.algorithms
+for select using (true);
+```
+
+4. Add your Supabase credentials in the `.env` file in your frontend folder:
+
+```sql
+VITE_SUPABASE_URL=your-supabase-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
 ## 🏃‍♂️ Running the project
 
 #### **Backend**
