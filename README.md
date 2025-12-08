@@ -96,6 +96,31 @@ VITE_SUPABASE_URL=your-supabase-url
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
+## ⏰ Keep Supabase Project Awake
+
+Since free Supabase projects can be suspended after a period of inactivity, a GitHub Actions workflow is used to keep the project alive by pinging it periodically.
+
+The workflow file is located at `.github/workflows/supabase-keepalive.yml`:
+
+```yml
+name: Keep Supabase awake
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -I "https://YOUR-PROJECT-ID.supabase.co/rest/v1/algorithms"
+```
+
+This workflow sends an HTTP request to Supabase every hour to prevent the project from being suspended. You can also manually trigger it via the Actions tab in GitHub.
+
 ## 🏃‍♂️ Running the project
 
 #### **Backend**
