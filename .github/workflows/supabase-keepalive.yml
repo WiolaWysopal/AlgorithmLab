@@ -3,12 +3,12 @@ name: Keep Supabase awake
 on:
   schedule:
     - cron: "0 * * * *"   # co godzinę
-  workflow_dispatch: {}
+  workflow_dispatch:
 
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Supabase REST endpoint
+      - name: Ping Supabase
         run: |
-          curl -I "https://mcruovspmyciexqcegic.supabase.co/rest/v1/algorithms" || true
+          curl -I "https://mcruovspmyciexqcegic.supabase.co/rest/v1/algorithms"
