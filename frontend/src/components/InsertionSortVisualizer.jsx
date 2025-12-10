@@ -37,7 +37,7 @@ function InsertionSortVisualizer() {
 
       if (error) {
         console.error("Error fetching description:", error.message);
-        setDescription("Brak opisu w bazie");
+        setDescription("No description in the database");
         return;
       }
 
@@ -46,11 +46,11 @@ function InsertionSortVisualizer() {
         setDescription(data[0].description);
       } else {
         console.warn("No data found for InsertionSort");
-        setDescription("Brak opisu w bazie");
+        setDescription("No description in the database");
       }
     } catch (err) {
       console.error("Unexpected error fetching description:", err);
-      setDescription("Brak opisu w bazie");
+      setDescription("No description in the database");
     }
   };
 

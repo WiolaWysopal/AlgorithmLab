@@ -123,7 +123,7 @@ This workflow sends an HTTP request to Supabase every hour to prevent the projec
 
 ## 🖼️ Favicon
 
-
+The application’s avatar (favicon) was generated using `Craion`, an AI-powered tool that creates images based on short text prompts. Craion uses generative models to produce graphics in various styles, making it easy to generate simple illustrations, icons, or visual concepts. The image used in this project was created specifically for the application and does not depict any real persons or objects.
 
 ## 🏃‍♂️ Running the project
 
