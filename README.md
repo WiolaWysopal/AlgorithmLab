@@ -121,6 +121,10 @@ jobs:
 
 This workflow sends an HTTP request to Supabase every hour to prevent the project from being suspended. You can also manually trigger it via the Actions tab in GitHub.
 
+## 🖼️ Favicon
+
+
+
 ## 🏃‍♂️ Running the project
 
 #### **Backend**
