@@ -7,6 +7,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function InsertionSortVisualizer() {
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
   const [initialArray, setInitialArray] = useState([5, 2, 4, 3, 1]);
   const [array, setArray] = useState([5, 2, 4, 3, 1]);
   const [inputValue, setInputValue] = useState("");
@@ -82,20 +83,41 @@ function InsertionSortVisualizer() {
 
   // --- SORTOWANIE ---
   const handleSort = async () => {
-    // reset wizualizacji do stanu początkowego
     setArray(initialArray);
     setSteps([]);
     setCurrentStep(0);
+    setIsAutoPlaying(false); // 🔹 domyślnie tryb ręczny
   
     const res = await fetch("http://localhost:5000/sort/insertion", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ array: initialArray }), // 🔹 ZAWSZE oryginał
+      body: JSON.stringify({ array: initialArray }),
     });
   
     const data = await res.json();
     setSteps(data.steps);
+  
+    // pokazujemy pierwszy krok
+    if (data.steps.length > 0) {
+      setArray(data.steps[0]);
+      setCurrentStep(1);
+    }
   };
+  
+  const handleNextStep = () => {
+    if (currentStep >= steps.length) return;
+  
+    setArray(steps[currentStep]);
+    setCurrentStep((prev) => prev + 1);
+  };
+
+  const handlePrevStep = () => {
+    if (currentStep <= 1) return;
+  
+    const prevIndex = currentStep - 2;
+    setArray(steps[prevIndex]);
+    setCurrentStep(prevIndex + 1);
+  };  
 
   const handleRefresh = () => {
     setArray(initialArray);
@@ -105,15 +127,18 @@ function InsertionSortVisualizer() {
 
   // --- WIZUALIZACJA KROKÓW ---
   useEffect(() => {
+    if (!isAutoPlaying) return;
     if (steps.length === 0) return;
+  
     if (currentStep < steps.length) {
       const timer = setTimeout(() => {
         setArray(steps[currentStep]);
-        setCurrentStep(currentStep + 1);
-      }, 300);
+        setCurrentStep((prev) => prev + 1);
+      }, 500);
+  
       return () => clearTimeout(timer);
     }
-  }, [steps, currentStep]);
+  }, [isAutoPlaying, steps, currentStep]);  
 
   return (
     <div className="container mt-4">
@@ -171,14 +196,47 @@ function InsertionSortVisualizer() {
 
         {/* --- PRZYCISK SORTOWANIA --- */}
         <div className="text-center d-flex justify-content-center gap-3">
-  <button className="btn btn-success" onClick={handleSort}>
-    Start Sorting
-  </button>
+          <button className="btn btn-success" onClick={handleSort}>
+            Start Sorting
+          </button>
 
-  <button className="btn btn-outline-secondary" onClick={handleRefresh}>
-    Refresh
-  </button>
-</div>
+          <button className="btn btn-outline-secondary" onClick={handleRefresh}>
+            Refresh
+          </button>
+        </div>
+
+        <div className="text-center d-flex justify-content-center gap-2 mt-3 flex-wrap">
+        <button
+          className="btn btn-outline-primary"
+          onClick={handlePrevStep}
+          disabled={currentStep <= 1}
+        >
+          ⏮ Previous
+        </button>
+
+        <button
+          className="btn btn-outline-primary"
+          onClick={handleNextStep}
+          disabled={currentStep >= steps.length}
+        >
+          Next ⏭
+        </button>
+
+        <button
+          className="btn btn-outline-success"
+          onClick={() => setIsAutoPlaying(true)}
+          disabled={isAutoPlaying}
+        >
+          ▶ Auto
+        </button>
+
+        <button
+          className="btn btn-outline-danger"
+          onClick={() => setIsAutoPlaying(false)}
+        >
+          ⏸ Pause
+        </button>
+      </div>
 
       </div>
     </div>

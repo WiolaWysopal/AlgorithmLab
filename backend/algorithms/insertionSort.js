@@ -9,10 +9,10 @@ function insertionSort(arr) {
     while (j >= 0 && a[j] > key) {
       a[j + 1] = a[j];
       j--;
-      steps.push([...a]); // zapisujemy stan tablicy po każdej zamianie
     }
+
     a[j + 1] = key;
-    steps.push([...a]); // zapisujemy stan po wstawieniu klucza
+    steps.push([...a]); // zapisujemy tylko po wstawieniu klucza
   }
 
   return { steps, sorted: a };
