@@ -194,6 +194,12 @@ function InsertionSortVisualizer() {
           ))}
         </div>
 
+        {/* KROKI SORTOWANIA */}
+
+        <div className="text-center mb-2">
+          <strong>Step:</strong> {currentStep} / {steps.length}
+        </div>
+
         {/* --- PRZYCISK SORTOWANIA --- */}
         <div className="text-center d-flex justify-content-center gap-3">
           <button className="btn btn-success" onClick={handleSort}>
