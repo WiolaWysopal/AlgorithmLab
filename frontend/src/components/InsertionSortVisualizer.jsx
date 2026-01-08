@@ -7,6 +7,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function InsertionSortVisualizer() {
+  const [initialArray, setInitialArray] = useState([5, 2, 4, 3, 1]);
   const [array, setArray] = useState([5, 2, 4, 3, 1]);
   const [inputValue, setInputValue] = useState("");
   const [steps, setSteps] = useState([]);
@@ -61,33 +62,46 @@ function InsertionSortVisualizer() {
   // --- USTAWIANIE WŁASNEJ TABLICY ---
   const handleSetArray = () => {
     if (!inputValue.trim()) return;
+  
     const parsed = inputValue
       .split(",")
       .map((num) => Number(num.trim()))
       .filter((n) => !isNaN(n));
-
+  
     if (parsed.length === 0) {
       alert("Enter valid numbers, separated by commas.");
       return;
     }
-
+  
+    setInitialArray(parsed); // 🔹 zapamiętujemy oryginał
     setArray(parsed);
     setSteps([]);
     setCurrentStep(0);
   };
+  
 
   // --- SORTOWANIE ---
   const handleSort = async () => {
+    // reset wizualizacji do stanu początkowego
+    setArray(initialArray);
+    setSteps([]);
+    setCurrentStep(0);
+  
     const res = await fetch("http://localhost:5000/sort/insertion", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ array }),
+      body: JSON.stringify({ array: initialArray }), // 🔹 ZAWSZE oryginał
     });
-
+  
     const data = await res.json();
     setSteps(data.steps);
-    setCurrentStep(0);
   };
+
+  const handleRefresh = () => {
+    setArray(initialArray);
+    setSteps([]);
+    setCurrentStep(0);
+  };  
 
   // --- WIZUALIZACJA KROKÓW ---
   useEffect(() => {
@@ -156,11 +170,16 @@ function InsertionSortVisualizer() {
         </div>
 
         {/* --- PRZYCISK SORTOWANIA --- */}
-        <div className="text-center">
-          <button className="btn btn-success" onClick={handleSort}>
-            Start Sorting
-          </button>
-        </div>
+        <div className="text-center d-flex justify-content-center gap-3">
+  <button className="btn btn-success" onClick={handleSort}>
+    Start Sorting
+  </button>
+
+  <button className="btn btn-outline-secondary" onClick={handleRefresh}>
+    Refresh
+  </button>
+</div>
+
       </div>
     </div>
   );
