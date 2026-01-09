@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import InsertionSortVisualizer from "./components/InsertionSortVisualizer";
+import BubbleSortVisualizer from "./components/BubbleSortVisualizer";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/insertion-sort" element={<InsertionSortVisualizer />} />
+        <Route path="/bubble-sort" element={<BubbleSortVisualizer />} />
       </Routes>
     </Router>
   );
