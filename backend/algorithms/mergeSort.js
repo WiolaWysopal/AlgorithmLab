@@ -23,24 +23,25 @@ function mergeSort(arr) {
     let j = 0;
     let k = start;
 
+    // scalanie do tablicy głównej
     while (i < left.length && j < right.length) {
       if (left[i] <= right[j]) {
         a[k++] = left[i++];
       } else {
         a[k++] = right[j++];
       }
-      steps.push([...a]); // każdy ruch do głównej tablicy
     }
 
     while (i < left.length) {
       a[k++] = left[i++];
-      steps.push([...a]);
     }
 
     while (j < right.length) {
       a[k++] = right[j++];
-      steps.push([...a]);
     }
+
+    // SNAPSHOT TYLKO PO CAŁYM MERGE
+    steps.push([...a]);
   }
 
   mergeSortRecursive(0, a.length);
