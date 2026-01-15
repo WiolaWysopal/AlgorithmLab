@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import InsertionSortVisualizer from "./components/InsertionSortVisualizer";
 import BubbleSortVisualizer from "./components/BubbleSortVisualizer";
 import SelectionSortVisualizer from "./components/SelectionSortVisualizer";
+import MergeSortVisualizer from "./components/MergeSortVisualizer";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/insertion-sort" element={<InsertionSortVisualizer />} />
         <Route path="/bubble-sort" element={<BubbleSortVisualizer />} />
         <Route path="/selection-sort" element={<SelectionSortVisualizer/>}/>
+        <Route path="/merge-sort" element={<MergeSortVisualizer/>}/>
       </Routes>
     </Router>
   );
