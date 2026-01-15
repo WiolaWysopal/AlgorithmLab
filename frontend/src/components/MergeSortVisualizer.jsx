@@ -143,7 +143,7 @@ function MergeSortVisualizer() {
   return (
     <div className="container mt-4">
       <div className="card p-4 shadow">
-        <h2 className="text-center mb-4">MergeSort Visualizer</h2>
+        <h2 className="text-center mb-4">Merge Sort Visualizer</h2>
 
         {/* --- OPIS ALGORYTMU --- */}
         {description && (
