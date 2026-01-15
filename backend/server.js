@@ -4,6 +4,7 @@ const cors = require("cors");
 const insertionSort = require("./algorithms/insertionSort");
 const bubbleSort = require("./algorithms/bubbleSort");
 const selectionSort = require("./algorithms/selectionSort");
+const mergeSort = require("./algorithms/mergeSort");
 
 const app = express();
 app.use(cors());
@@ -41,6 +42,18 @@ app.post("/sort/selection", (req, res) => {
     return res.status(400).json({ error: "Array is required" });
   }
   const result = selectionSort(array);
+  res.json(result);
+});
+
+// Endpoint dla Merge Sort
+app.post("/sort/merge", (req, res) => {
+  const { array } = req.body;
+
+  if (!Array.isArray(array)) {
+    return res.status(400).json({ error: "Array is required" });
+  }
+
+  const result = mergeSort(array);
   res.json(result);
 });
 
