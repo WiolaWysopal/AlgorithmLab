@@ -58,6 +58,7 @@ app.post("/sort/merge", (req, res) => {
   res.json(result);
 });
 
+// Endpoint dla Quick Sort
 app.post("/sort/quick", (req, res) => {
   const { array } = req.body;
   if (!Array.isArray(array)) {
