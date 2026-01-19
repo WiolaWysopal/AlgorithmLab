@@ -68,6 +68,16 @@ app.post("/sort/quick", (req, res) => {
   res.json(result);
 });
 
+// Endpoint dla Heap Sort
+app.post("/sort/heap", (req, res) => {
+  const { array } = req.body;
+  if (!Array.isArray(array)) {
+    return res.status(400).json({ error: "Array is required" });
+  }
+  const result = quickSort(array);
+  res.json(result);
+});
+
 app.listen(5000, () => {
   console.log("Backend works at http://localhost:5000");
 });
