@@ -6,6 +6,7 @@ const bubbleSort = require("./algorithms/bubbleSort");
 const selectionSort = require("./algorithms/selectionSort");
 const mergeSort = require("./algorithms/mergeSort");
 const quickSort = require("./algorithms/quickSort");
+const heapSort = require("./algorithms/heapSort");
 
 const app = express();
 app.use(cors());
@@ -74,7 +75,7 @@ app.post("/sort/heap", (req, res) => {
   if (!Array.isArray(array)) {
     return res.status(400).json({ error: "Array is required" });
   }
-  const result = quickSort(array);
+  const result = heapSort(array);
   res.json(result);
 });
 
