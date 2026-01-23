@@ -17,7 +17,7 @@ function Home() {
 
         <div className="col-md-3">
           <Link to="/bubble-sort" className="text-decoration-none">
-            <div className="card shadow text-center p-4 bg-success text-white">
+            <div className="card shadow text-center p-4 text-white" style={{ backgroundColor: "#2dc435" }}>
               <h4>Bubble Sort</h4>
             </div>
           </Link>
