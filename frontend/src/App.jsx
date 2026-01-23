@@ -5,6 +5,7 @@ import BubbleSortVisualizer from "./components/BubbleSortVisualizer";
 import SelectionSortVisualizer from "./components/SelectionSortVisualizer";
 import MergeSortVisualizer from "./components/MergeSortVisualizer";
 import QuickSortVisualizer from "./components/QuickSortVisualizer";
+import HeapSortVisualizer from "./components/HeapSortVisualizer";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/selection-sort" element={<SelectionSortVisualizer/>}/>
         <Route path="/merge-sort" element={<MergeSortVisualizer/>}/>
         <Route path="/quick-sort" element={<QuickSortVisualizer/>}/>
+        <Route path="/heap-sort" element={<QuickSortVisualizer/>}/>
       </Routes>
     </Router>
   );
