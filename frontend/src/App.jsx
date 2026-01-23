@@ -30,7 +30,7 @@ function App() {
         <Route path="/selection-sort" element={<SelectionSortVisualizer/>}/>
         <Route path="/merge-sort" element={<MergeSortVisualizer/>}/>
         <Route path="/quick-sort" element={<QuickSortVisualizer/>}/>
-        <Route path="/heap-sort" element={<QuickSortVisualizer/>}/>
+        <Route path="/heap-sort" element={<HeapSortVisualizer/>}/>
       </Routes>
     </Router>
   );

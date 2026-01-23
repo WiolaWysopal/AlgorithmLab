@@ -47,6 +47,14 @@ function Home() {
         </Link>
       </div>
 
+      <div className="col-md-3">
+        <Link to="/heap-sort" className="text-decoration-none">
+          <div className="card shadow text-center p-4 text-white" style={{ backgroundColor: "#4e76f7" }}>
+            <h4>Heap Sort</h4>
+          </div>
+        </Link>
+      </div>
+
         {/* Tu można dodać kolejne kafelki */}
         <div className="col-md-3">
           <div className="card shadow text-center p-4 bg-secondary text-white">
