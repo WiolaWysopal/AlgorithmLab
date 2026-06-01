@@ -29,57 +29,55 @@ function QuickSortVisualizer() {
 
   // --- POBIERANIE OPISU Z SUPABASE (BEZ .single()) ---
   useEffect(() => {
-  const fetchDescription = async () => {
-    try {
-      // pobieramy description i id, aby mieć pewność, że jest w wyniku
-      const { data, error } = await supabase
-        .from("algorithms")
-        .select("id, description, name")
-        .eq("name", "QuickSort");
+    const fetchDescription = async () => {
+      try {
+        // pobieramy description i id, aby mieć pewność, że jest w wyniku
+        const { data, error } = await supabase
+          .from("algorithms")
+          .select("id, description, name")
+          .eq("name", "QuickSort");
 
-      if (error) {
-        console.error("Error fetching description:", error.message);
+        if (error) {
+          console.error("Error fetching description:", error.message);
+          setDescription("No description in the database");
+          return;
+        }
+
+        if (data && data.length > 0) {
+          console.log("Fetched data from Supabase:", data);
+          setDescription(data[0].description);
+        } else {
+          console.warn("No data found for QuickSort");
+          setDescription("No description in the database");
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching description:", err);
         setDescription("No description in the database");
-        return;
       }
+    };
 
-      if (data && data.length > 0) {
-        console.log("Fetched data from Supabase:", data);
-        setDescription(data[0].description);
-      } else {
-        console.warn("No data found for QuickSort");
-        setDescription("No description in the database");
-      }
-    } catch (err) {
-      console.error("Unexpected error fetching description:", err);
-      setDescription("No description in the database");
-    }
-  };
-
-  fetchDescription();
-}, []);
-
+    fetchDescription();
+  }, []);
 
   // --- USTAWIANIE WŁASNEJ TABLICY ---
   const handleSetArray = () => {
     if (!inputValue.trim()) return;
-  
+
     const parsed = inputValue
       .split(",")
       .map((num) => Number(num.trim()))
       .filter((n) => !isNaN(n));
-  
+
     if (parsed.length === 0) {
       alert("Enter valid numbers, separated by commas.");
       return;
     }
-  
+
     setInitialArray(parsed); // zapamiętujemy oryginał
     setArray(parsed);
     setSteps([]);
     setCurrentStep(0);
   };
-  
 
   // --- SORTOWANIE ---
   const handleSort = async () => {
@@ -87,58 +85,58 @@ function QuickSortVisualizer() {
     setSteps([]);
     setCurrentStep(0);
     setIsAutoPlaying(false); // domyślnie tryb ręczny
-  
+
     const res = await fetch("http://localhost:5000/sort/quick", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ array: initialArray }),
     });
-  
+
     const data = await res.json();
     setSteps(data.steps);
-  
+
     // pokazujemy pierwszy krok
     if (data.steps.length > 0) {
       setArray(data.steps[0]);
       setCurrentStep(1);
     }
   };
-  
+
   const handleNextStep = () => {
     if (currentStep >= steps.length) return;
-  
+
     setArray(steps[currentStep]);
     setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevStep = () => {
     if (currentStep <= 1) return;
-  
+
     const prevIndex = currentStep - 2;
     setArray(steps[prevIndex]);
     setCurrentStep(prevIndex + 1);
-  };  
+  };
 
   const handleRefresh = () => {
     setArray(initialArray);
     setSteps([]);
     setCurrentStep(0);
-  };  
+  };
 
   // --- WIZUALIZACJA KROKÓW ---
   useEffect(() => {
     if (!isAutoPlaying) return;
     if (steps.length === 0) return;
-  
+
     if (currentStep < steps.length) {
       const timer = setTimeout(() => {
         setArray(steps[currentStep]);
         setCurrentStep((prev) => prev + 1);
       }, 500);
-  
+
       return () => clearTimeout(timer);
     }
-  }, [isAutoPlaying, steps, currentStep]);  
+  }, [isAutoPlaying, steps, currentStep]);
 
   return (
     <div className="container mt-4">
@@ -148,18 +146,13 @@ function QuickSortVisualizer() {
         {/* --- OPIS ALGORYTMU --- */}
         {description && (
           <div className="mb-2">
-            <p className="text-secondary fw-medium fst-italic">
-              {description}
-            </p>
+            <p className="text-secondary fw-medium fst-italic">{description}</p>
           </div>
         )}
 
-
         {/* --- INPUT + PRZYCISK --- */}
         <div className="mb-4">
-          <label className="form-label fw-bold">
-            Enter numbers (e.g. 5,2,4,3,1):
-          </label>
+          <label className="form-label fw-bold">Enter numbers (e.g. 5,2,4,3,1):</label>
           <div className="d-flex flex-column flex-sm-row gap-2">
             <input
               type="text"
@@ -212,38 +205,34 @@ function QuickSortVisualizer() {
         </div>
 
         <div className="text-center d-flex justify-content-center gap-2 mt-3 flex-wrap">
-        <button
-          className="btn btn-outline-primary"
-          onClick={handlePrevStep}
-          disabled={currentStep <= 1}
-        >
-          ⏮ Previous
-        </button>
+          <button
+            className="btn btn-outline-primary"
+            onClick={handlePrevStep}
+            disabled={currentStep <= 1}
+          >
+            ⏮ Previous
+          </button>
 
-        <button
-          className="btn btn-outline-primary"
-          onClick={handleNextStep}
-          disabled={currentStep >= steps.length}
-        >
-          Next ⏭
-        </button>
+          <button
+            className="btn btn-outline-primary"
+            onClick={handleNextStep}
+            disabled={currentStep >= steps.length}
+          >
+            Next ⏭
+          </button>
 
-        <button
-          className="btn btn-outline-success"
-          onClick={() => setIsAutoPlaying(true)}
-          disabled={isAutoPlaying}
-        >
-          ▶ Auto
-        </button>
+          <button
+            className="btn btn-outline-success"
+            onClick={() => setIsAutoPlaying(true)}
+            disabled={isAutoPlaying}
+          >
+            ▶ Auto
+          </button>
 
-        <button
-          className="btn btn-outline-danger"
-          onClick={() => setIsAutoPlaying(false)}
-        >
-          ⏸ Pause
-        </button>
-      </div>
-
+          <button className="btn btn-outline-danger" onClick={() => setIsAutoPlaying(false)}>
+            ⏸ Pause
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ function selectionSort(arr) {
 
   return {
     steps,
-    sorted: a
+    sorted: a,
   };
 }
 

@@ -38,7 +38,7 @@ function quickSort(arr) {
 
   return {
     steps,
-    sorted: a
+    sorted: a,
   };
 }
 

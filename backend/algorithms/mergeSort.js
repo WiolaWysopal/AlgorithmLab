@@ -48,7 +48,7 @@ function mergeSort(arr) {
 
   return {
     steps,
-    sorted: a
+    sorted: a,
   };
 }
 

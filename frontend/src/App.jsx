@@ -11,14 +11,16 @@ function App() {
   return (
     <Router>
       <nav className="navbar navbar-dark bg-dark w-100">
-        <h1 className="text-center w-100 display-5"
+        <h1
+          className="text-center w-100 display-5"
           style={{
             color: "white",
             padding: "1rem 0",
             fontFamily: "'Poppins', sans-serif",
             fontWeight: 600,
-            letterSpacing: "2px"
-          }}>
+            letterSpacing: "2px",
+          }}
+        >
           AlgorithmLab
         </h1>
       </nav>
@@ -27,10 +29,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/insertion-sort" element={<InsertionSortVisualizer />} />
         <Route path="/bubble-sort" element={<BubbleSortVisualizer />} />
-        <Route path="/selection-sort" element={<SelectionSortVisualizer/>}/>
-        <Route path="/merge-sort" element={<MergeSortVisualizer/>}/>
-        <Route path="/quick-sort" element={<QuickSortVisualizer/>}/>
-        <Route path="/heap-sort" element={<HeapSortVisualizer/>}/>
+        <Route path="/selection-sort" element={<SelectionSortVisualizer />} />
+        <Route path="/merge-sort" element={<MergeSortVisualizer />} />
+        <Route path="/quick-sort" element={<QuickSortVisualizer />} />
+        <Route path="/heap-sort" element={<HeapSortVisualizer />} />
       </Routes>
     </Router>
   );
