@@ -29,58 +29,56 @@ function BubbleSortVisualizer() {
 
   // --- POBIERANIE OPISU Z SUPABASE (BEZ .single()) ---
   useEffect(() => {
-  const fetchDescription = async () => {
-    try {
-      // pobieramy description i id, aby mieć pewność, że jest w wyniku
-      const { data, error } = await supabase
-        .from("algorithms")
-        .select("id, description, name")
-        .eq("name", "BubbleSort");
+    const fetchDescription = async () => {
+      try {
+        // pobieramy description i id, aby mieć pewność, że jest w wyniku
+        const { data, error } = await supabase
+          .from("algorithms")
+          .select("id, description, name")
+          .eq("name", "BubbleSort");
 
-      if (error) {
-        console.error("Error fetching description:", error.message);
+        if (error) {
+          console.error("Error fetching description:", error.message);
+          setDescription("No description in the database");
+          return;
+        }
+
+        if (data && data.length > 0) {
+          console.log("Fetched data from Supabase:", data);
+          setDescription(data[0].description);
+        } else {
+          console.warn("No data found for BubbleSort");
+          setDescription("No description in the database");
+        }
+      } catch (err) {
+        console.error("Unexpected error fetching description:", err);
         setDescription("No description in the database");
-        return;
       }
+    };
 
-      if (data && data.length > 0) {
-        console.log("Fetched data from Supabase:", data);
-        setDescription(data[0].description);
-      } else {
-        console.warn("No data found for BubbleSort");
-        setDescription("No description in the database");
-      }
-    } catch (err) {
-      console.error("Unexpected error fetching description:", err);
-      setDescription("No description in the database");
-    }
-  };
-
-  fetchDescription();
-}, []);
-
+    fetchDescription();
+  }, []);
 
   // --- USTAWIANIE WŁASNEJ TABLICY ---
   const handleSetArray = () => {
     if (!inputValue.trim()) return;
-  
+
     const parsed = inputValue
       .split(",")
       .map((num) => Number(num.trim()))
       .filter((n) => !isNaN(n));
-  
+
     if (parsed.length === 0) {
       alert("Enter valid numbers, separated by commas.");
       return;
     }
-  
+
     setInitialArray(parsed); // 🔹 zapamiętujemy oryginał
     setArray(parsed);
     setSteps([]);
     setCurrentStep(0);
     setIsAutoPlaying(false);
   };
-  
 
   // --- SORTOWANIE ---
   const handleSort = async () => {
@@ -88,28 +86,28 @@ function BubbleSortVisualizer() {
     setSteps([]);
     setCurrentStep(0);
     setIsAutoPlaying(false); // 🔹 domyślnie tryb ręczny
-  
+
     const res = await fetch("http://localhost:5000/sort/bubble", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ array: initialArray }),
     });
-  
+
     const data = await res.json();
     setSteps(data.steps);
-  
+
     // pokazujemy pierwszy krok
     if (data.steps.length > 0) {
       setArray(data.steps[0].array);
       setCurrentStep(1);
     }
   };
-  
-  const handleNextStep = () => {
-  if (currentStep >= steps.length) return;
 
-      setArray(steps[currentStep].array);
-      setCurrentStep((prev) => prev + 1);
+  const handleNextStep = () => {
+    if (currentStep >= steps.length) return;
+
+    setArray(steps[currentStep].array);
+    setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevStep = () => {
@@ -120,29 +118,26 @@ function BubbleSortVisualizer() {
     setCurrentStep(prevIndex + 1);
   };
 
-const handleRefresh = () => {
-  setIsAutoPlaying(false);
-  setArray(initialArray);
-  setSteps([]);
-  setCurrentStep(0);
-};
+  const handleRefresh = () => {
+    setIsAutoPlaying(false);
+    setArray(initialArray);
+    setSteps([]);
+    setCurrentStep(0);
+  };
 
   // --- WIZUALIZACJA KROKÓW ---
-useEffect(() => {
-  if (!isAutoPlaying) return;
-  if (steps.length === 0) return;
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+    if (steps.length === 0) return;
+    if (currentStep >= steps.length) return;
 
-  if (currentStep < steps.length) {
     const timer = setTimeout(() => {
       setArray(steps[currentStep].array);
       setCurrentStep((prev) => prev + 1);
     }, 500);
 
     return () => clearTimeout(timer);
-  } else {
-    setIsAutoPlaying(false);
-  }
-}, [isAutoPlaying, steps, currentStep]); 
+  }, [isAutoPlaying, steps, currentStep]);
 
   const activeStep = steps[currentStep - 1];
 
@@ -154,18 +149,13 @@ useEffect(() => {
         {/* --- OPIS ALGORYTMU --- */}
         {description && (
           <div className="mb-2">
-            <p className="text-secondary fw-medium fst-italic">
-              {description}
-            </p>
+            <p className="text-secondary fw-medium fst-italic">{description}</p>
           </div>
         )}
 
-
         {/* --- INPUT + PRZYCISK --- */}
         <div className="mb-4">
-          <label className="form-label fw-bold">
-            Enter numbers (e.g. 5,2,4,3,1):
-          </label>
+          <label className="form-label fw-bold">Enter numbers (e.g. 5,2,4,3,1):</label>
           <div className="d-flex flex-column flex-sm-row gap-2">
             <input
               type="text"
@@ -183,35 +173,35 @@ useEffect(() => {
         {/* --- KAFELKI (PEŁNA RESPONSYWNOŚĆ) --- */}
         <div className="d-flex justify-content-center gap-3 mb-4 align-items-end flex-wrap">
           {array.map((value, idx) => (
-  <div
-    key={idx}
-    className={`text-white d-flex justify-content-center align-items-end ${
-      activeStep?.sorted
-        ? "bg-success"
-        : activeStep?.swappedIndexes?.includes(idx)
-        ? "bg-danger"
-        : activeStep?.comparing?.includes(idx)
-        ? "bg-warning"
-        : "bg-primary"
-    }`}
-    style={{
-      height: `${getHeight(value)}px`,
-      width: `${getBarWidth()}px`,
-      fontWeight: "bold",
-      borderRadius: "8px",
-      boxShadow: "0 4px 8px rgba(0,0,0,0.25)",
-      transition: "height 0.3s ease-in-out, background-color 0.3s ease-in-out",
-    }}
-  >
-    {value}
-  </div>
-))}
+            <div
+              key={idx}
+              className={`text-white d-flex justify-content-center align-items-end ${
+                activeStep?.sorted
+                  ? "bg-success"
+                  : activeStep?.swappedIndexes?.includes(idx)
+                    ? "bg-danger"
+                    : activeStep?.comparing?.includes(idx)
+                      ? "bg-warning"
+                      : "bg-primary"
+              }`}
+              style={{
+                height: `${getHeight(value)}px`,
+                width: `${getBarWidth()}px`,
+                fontWeight: "bold",
+                borderRadius: "8px",
+                boxShadow: "0 4px 8px rgba(0,0,0,0.25)",
+                transition: "height 0.3s ease-in-out, background-color 0.3s ease-in-out",
+              }}
+            >
+              {value}
+            </div>
+          ))}
         </div>
         {activeStep?.message && (
-  <div className="text-center mb-3">
-    <strong>{activeStep.message}</strong>
-  </div>
-)}
+          <div className="text-center mb-3">
+            <strong>{activeStep.message}</strong>
+          </div>
+        )}
 
         {/* KROKI SORTOWANIA */}
 
@@ -231,38 +221,34 @@ useEffect(() => {
         </div>
 
         <div className="text-center d-flex justify-content-center gap-2 mt-3 flex-wrap">
-        <button
-          className="btn btn-outline-primary"
-          onClick={handlePrevStep}
-          disabled={currentStep <= 1}
-        >
-          ⏮ Previous
-        </button>
+          <button
+            className="btn btn-outline-primary"
+            onClick={handlePrevStep}
+            disabled={currentStep <= 1}
+          >
+            ⏮ Previous
+          </button>
 
-        <button
-          className="btn btn-outline-primary"
-          onClick={handleNextStep}
-          disabled={currentStep >= steps.length}
-        >
-          Next ⏭
-        </button>
+          <button
+            className="btn btn-outline-primary"
+            onClick={handleNextStep}
+            disabled={currentStep >= steps.length}
+          >
+            Next ⏭
+          </button>
 
-        <button
-          className="btn btn-outline-success"
-          onClick={() => setIsAutoPlaying(true)}
-          disabled={isAutoPlaying}
-        >
-          ▶ Auto
-        </button>
+          <button
+            className="btn btn-outline-success"
+            onClick={() => setIsAutoPlaying(currentStep < steps.length)}
+            disabled={isAutoPlaying || steps.length === 0 || currentStep >= steps.length}
+          >
+            ▶ Auto
+          </button>
 
-        <button
-          className="btn btn-outline-danger"
-          onClick={() => setIsAutoPlaying(false)}
-        >
-          ⏸ Pause
-        </button>
-      </div>
-
+          <button className="btn btn-outline-danger" onClick={() => setIsAutoPlaying(false)}>
+            ⏸ Pause
+          </button>
+        </div>
       </div>
     </div>
   );
