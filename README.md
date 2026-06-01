@@ -36,6 +36,7 @@ backend/           # Node.js backend
 ```
 
 ## 🌐 Routing in React
+
 - The frontend uses React Router to handle navigation between pages.
 
 - `/`- → Home page with algorithm selection cards
@@ -51,16 +52,13 @@ This approach allows multiple pages without reloading the browser, which is stan
 The backend provides `REST` endpoints for handling sorting and descriptions:
 
 - `GET /`
-
   - **Test endpoint**, returns _AlgorithmLab backend is running_
 
 - `POST /sort/insertion`
-
   - Receives `JSON { array: [5,2,4,3] }`
   - Returns the sorting steps and the sorted array
 
 - `GET /description/insertion` (_future feature_)
-
   - Will return a text description of the algorithm
   - Can be later connected to a database (Supabase, MongoDB Atlas, etc.)
 
@@ -78,7 +76,7 @@ This project uses [Supabase](https://supabase.com/) as a backend to store algori
 
 2. Insert data into the table, for example:
 
-```sql
+````sql
 INSERT INTO public.algorithms (id, name, description, category)
 VALUES ('1', 'InsertionSort', 'Insertion Sort is a simple way to sort a list of numbers...', 'Sorting');
 
@@ -87,7 +85,7 @@ VALUES ('1', 'InsertionSort', 'Insertion Sort is a simple way to sort a list of 
 ```sql
 create policy "Allow read for everyone" on public.algorithms
 for select using (true);
-```
+````
 
 4. Add your Supabase credentials in the `.env` file in your frontend folder:
 
@@ -107,7 +105,7 @@ name: Keep Supabase awake
 
 on:
   schedule:
-    - cron: "0 * * * *"   # every hour
+    - cron: "0 * * * *" # every hour
   workflow_dispatch:
 
 jobs:
@@ -144,4 +142,39 @@ Being in project root directory:
 cd frontend
 npm run dev
 ```
+
 Open your browser at `http://localhost:5173`.
+
+## 🎨 Code Formatting
+
+This project uses **Prettier** to maintain consistent code style across the frontend and backend.
+
+### Format all files
+
+From the project root directory run:
+
+```bash
+npm run format
+```
+
+### Check formatting without modifying files
+
+```bash
+npm run format:check
+```
+
+### Configuration
+
+Prettier configuration is stored in:
+
+```text
+.prettierrc
+.prettierignore
+```
+
+Formatting is applied to the entire project, including:
+
+- Frontend (React + Vite)
+- Backend (Node.js + Express)
+- Configuration files
+- Documentation files
