@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Home from "./pages/Home";
 import InsertionSortVisualizer from "./components/InsertionSortVisualizer";
 import BubbleSortVisualizer from "./components/BubbleSortVisualizer";
@@ -10,19 +10,24 @@ import HeapSortVisualizer from "./components/HeapSortVisualizer";
 function App() {
   return (
     <Router>
-      <nav className="navbar navbar-dark bg-dark w-100">
-        <h1
-          className="text-center w-100 display-5"
-          style={{
-            color: "white",
-            padding: "1rem 0",
-            fontFamily: "'Poppins', sans-serif",
-            fontWeight: 600,
-            letterSpacing: "2px",
-          }}
-        >
-          AlgorithmLab
-        </h1>
+      <nav className="navbar navbar-dark bg-dark px-4 py-3">
+        <div className="container-fluid position-relative">
+          <h1
+            className="position-absolute start-50 translate-middle-x m-0"
+            style={{
+              color: "white",
+              fontFamily: "'Poppins', sans-serif",
+              fontWeight: 600,
+              letterSpacing: "2px",
+            }}
+          >
+            AlgorithmLab
+          </h1>
+
+          <Link to="/" className="ms-auto text-white text-decoration-none" title="Home">
+            <i className="bi bi-house-fill fs-3"></i>
+          </Link>
+        </div>
       </nav>
 
       <Routes>
