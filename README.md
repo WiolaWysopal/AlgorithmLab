@@ -18,20 +18,29 @@ Its goal is to showcase practical knowledge of algorithms and the ability to imp
 ## 📂 Project Structure
 
 ```ascii
-frontend/          # React frontend
-  ├─ src/
-  │   ├─ components/
-  │   │   ├─ InsertionSortVisualizer.jsx
-  │   │   └─ InsertionSortDescription.jsx
-  │   ├─ pages/
-  │   │   └─ Home.jsx
-  │   └─ App.jsx
-  └─ main.jsx       # React entry point
+frontend/
+├─ src/
+│  ├─ components/
+│  │  ├─ BubbleSortVisualizer.jsx
+│  │  ├─ HeapSortVisualizer.jsx
+│  │  ├─ InsertionSortVisualizer.jsx
+│  │  ├─ MergeSortVisualizer.jsx
+│  │  ├─ QuickSortVisualizer.jsx
+│  │  └─ SelectionSortVisualizer.jsx
+│  ├─ pages/
+│  │  └─ Home.jsx
+│  ├─ App.jsx
+│  └─ main.jsx
 
-backend/           # Node.js backend
-  ├─ algorithms/
-  │   └─ insertionSort.js
-  └─ server.js
+backend/
+├─ algorithms/
+│  ├─ bubbleSort.js
+│  ├─ heapSort.js
+│  ├─ insertionSort.js
+│  ├─ mergeSort.js
+│  ├─ quickSort.js
+│  └─ selectionSort.js
+└─ server.js
 
 ```
 
@@ -39,9 +48,13 @@ backend/           # Node.js backend
 
 - The frontend uses React Router to handle navigation between pages.
 
-- `/`- → Home page with algorithm selection cards
-
-- `/insertion-sort` → Insertion Sort visualizer page
+- `/` → Home page
+- `/insertion-sort` → Insertion Sort Visualizer
+- `/bubble-sort` → Bubble Sort Visualizer
+- `/selection-sort` → Selection Sort Visualizer
+- `/merge-sort` → Merge Sort Visualizer
+- `/quick-sort` → Quick Sort Visualizer
+- `/heap-sort` → Heap Sort Visualizer
 
 - Each algorithm will eventually have its own route and visualizer component.
 
@@ -62,6 +75,16 @@ The backend provides `REST` endpoints for handling sorting and descriptions:
   - Will return a text description of the algorithm
   - Can be later connected to a database (Supabase, MongoDB Atlas, etc.)
 
+Rest of endpoints works in similar way:
+
+```bash
+POST /sort/bubble
+POST /sort/selection
+POST /sort/merge
+POST /sort/quick
+POST /sort/heap
+```
+
 ## ⚡ Supabase Integration
 
 This project uses [Supabase](https://supabase.com/) as a backend to store algorithm descriptions. The `InsertionSortVisualizer` component fetches the description of the algorithm from the Supabase database and displays it above the input field.
@@ -76,16 +99,17 @@ This project uses [Supabase](https://supabase.com/) as a backend to store algori
 
 2. Insert data into the table, for example:
 
-````sql
+```sql
 INSERT INTO public.algorithms (id, name, description, category)
 VALUES ('1', 'InsertionSort', 'Insertion Sort is a simple way to sort a list of numbers...', 'Sorting');
+```
 
 3. Enable Row Level Security (RLS) and create a policy to allow public read access:
 
 ```sql
 create policy "Allow read for everyone" on public.algorithms
 for select using (true);
-````
+```
 
 4. Add your Supabase credentials in the `.env` file in your frontend folder:
 
@@ -122,6 +146,22 @@ This workflow sends an HTTP request to Supabase every hour to prevent the projec
 ## 🖼️ Favicon
 
 The application’s avatar (favicon) was generated using `Craion`, an AI-powered tool that creates images based on short text prompts. Craion uses generative models to produce graphics in various styles, making it easy to generate simple illustrations, icons, or visual concepts. The image used in this project was created specifically for the application and does not depict any real persons or objects.
+
+## ✨ Features
+
+- Interactive visualization of sorting algorithms
+- Step-by-step execution
+- Automatic playback mode
+- Previous / Next step navigation
+- Dynamic algorithm descriptions from Supabase
+- Responsive UI built with Bootstrap
+- Multiple sorting algorithms:
+  - Bubble Sort
+  - Insertion Sort
+  - Selection Sort
+  - Merge Sort
+  - Quick Sort
+  - Heap Sort
 
 ## 🏃‍♂️ Running the project
 
@@ -178,3 +218,38 @@ Formatting is applied to the entire project, including:
 - Backend (Node.js + Express)
 - Configuration files
 - Documentation files
+
+## 🔍 Code Linting
+
+This project uses **ESLint** to detect potential issues and enforce code quality standards.
+
+### Run lint checks
+
+From the project root directory run:
+
+```bash
+npm run lint
+```
+
+### Automatically fix lint issues
+
+```bash
+npm run lint:fix
+```
+
+### What ESLint checks
+
+- React Hooks rules
+- JavaScript best practices
+- Unused variables
+- Potential code quality issues
+- Consistent coding patterns
+
+## ✅ Code Quality
+
+- ESLint static code analysis
+- Prettier code formatting
+- Consistent coding style
+- Modular project structure
+- React Hooks linting
+- Automated formatting scripts
