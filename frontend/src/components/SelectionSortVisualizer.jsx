@@ -77,6 +77,7 @@ function SelectionSortVisualizer() {
     setArray(parsed);
     setSteps([]);
     setCurrentStep(0);
+    setIsAutoPlaying(false);
   };
 
   // --- SORTOWANIE ---
@@ -93,19 +94,20 @@ function SelectionSortVisualizer() {
     });
 
     const data = await res.json();
-    setSteps(data.steps);
 
-    // pokazujemy pierwszy krok
-    if (data.steps.length > 0) {
-      setArray(data.steps[0]);
-      setCurrentStep(1);
+    if (!data.steps || data.steps.length === 0) {
+      return;
     }
+
+    setSteps(data.steps);
+    setArray(data.steps[0].array);
+    setCurrentStep(1);
   };
 
   const handleNextStep = () => {
     if (currentStep >= steps.length) return;
 
-    setArray(steps[currentStep]);
+    setArray(steps[currentStep].array);
     setCurrentStep((prev) => prev + 1);
   };
 
@@ -113,7 +115,7 @@ function SelectionSortVisualizer() {
     if (currentStep <= 1) return;
 
     const prevIndex = currentStep - 2;
-    setArray(steps[prevIndex]);
+    setArray(steps[prevIndex].array);
     setCurrentStep(prevIndex + 1);
   };
 
@@ -121,22 +123,24 @@ function SelectionSortVisualizer() {
     setArray(initialArray);
     setSteps([]);
     setCurrentStep(0);
+    setIsAutoPlaying(false);
   };
 
   // --- WIZUALIZACJA KROKÓW ---
   useEffect(() => {
     if (!isAutoPlaying) return;
     if (steps.length === 0) return;
+    if (currentStep >= steps.length) return;
 
-    if (currentStep < steps.length) {
-      const timer = setTimeout(() => {
-        setArray(steps[currentStep]);
-        setCurrentStep((prev) => prev + 1);
-      }, 500);
+    const timer = setTimeout(() => {
+      setArray(steps[currentStep].array);
+      setCurrentStep((prev) => prev + 1);
+    }, 500);
 
-      return () => clearTimeout(timer);
-    }
+    return () => clearTimeout(timer);
   }, [isAutoPlaying, steps, currentStep]);
+
+  const activeStep = steps[currentStep - 1];
 
   return (
     <div className="container mt-4">
@@ -172,20 +176,40 @@ function SelectionSortVisualizer() {
           {array.map((value, idx) => (
             <div
               key={idx}
-              className="bg-primary text-white d-flex justify-content-center align-items-end"
+              className={`d-flex justify-content-center align-items-end ${
+                activeStep?.sorted
+                  ? "bg-success text-white"
+                  : activeStep?.swappedIndexes?.includes(idx)
+                    ? "bg-danger text-white"
+                    : activeStep?.currentIndex === idx
+                      ? "bg-info text-dark"
+                      : activeStep?.minIndex === idx
+                        ? "bg-warning text-dark"
+                        : activeStep?.comparing?.includes(idx)
+                          ? "bg-secondary text-white"
+                          : activeStep?.sortedIndexes?.includes(idx)
+                            ? "bg-success text-white"
+                            : "bg-primary text-white"
+              }`}
               style={{
                 height: `${getHeight(value)}px`,
                 width: `${getBarWidth()}px`,
                 fontWeight: "bold",
                 borderRadius: "8px",
                 boxShadow: "0 4px 8px rgba(0,0,0,0.25)",
-                transition: "height 0.3s ease-in-out",
+                transition: "height 0.3s ease-in-out, background-color 0.3s ease-in-out",
               }}
             >
               {value}
             </div>
           ))}
         </div>
+
+        {activeStep?.message && (
+          <div className="text-center mb-3">
+            <strong>{activeStep.message}</strong>
+          </div>
+        )}
 
         {/* KROKI SORTOWANIA */}
 
@@ -223,8 +247,8 @@ function SelectionSortVisualizer() {
 
           <button
             className="btn btn-outline-success"
-            onClick={() => setIsAutoPlaying(true)}
-            disabled={isAutoPlaying}
+            onClick={() => setIsAutoPlaying(currentStep < steps.length)}
+            disabled={isAutoPlaying || steps.length === 0 || currentStep >= steps.length}
           >
             ▶ Auto
           </button>
