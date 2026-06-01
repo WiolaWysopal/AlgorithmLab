@@ -78,6 +78,7 @@ function BubbleSortVisualizer() {
     setArray(parsed);
     setSteps([]);
     setCurrentStep(0);
+    setIsAutoPlaying(false);
   };
   
 
@@ -99,46 +100,51 @@ function BubbleSortVisualizer() {
   
     // pokazujemy pierwszy krok
     if (data.steps.length > 0) {
-      setArray(data.steps[0]);
+      setArray(data.steps[0].array);
       setCurrentStep(1);
     }
   };
   
   const handleNextStep = () => {
-    if (currentStep >= steps.length) return;
-  
-    setArray(steps[currentStep]);
-    setCurrentStep((prev) => prev + 1);
+  if (currentStep >= steps.length) return;
+
+      setArray(steps[currentStep].array);
+      setCurrentStep((prev) => prev + 1);
   };
 
   const handlePrevStep = () => {
     if (currentStep <= 1) return;
-  
-    const prevIndex = currentStep - 2;
-    setArray(steps[prevIndex]);
-    setCurrentStep(prevIndex + 1);
-  };  
 
-  const handleRefresh = () => {
-    setArray(initialArray);
-    setSteps([]);
-    setCurrentStep(0);
-  };  
+    const prevIndex = currentStep - 2;
+    setArray(steps[prevIndex].array);
+    setCurrentStep(prevIndex + 1);
+  };
+
+const handleRefresh = () => {
+  setIsAutoPlaying(false);
+  setArray(initialArray);
+  setSteps([]);
+  setCurrentStep(0);
+};
 
   // --- WIZUALIZACJA KROKÓW ---
-  useEffect(() => {
-    if (!isAutoPlaying) return;
-    if (steps.length === 0) return;
-  
-    if (currentStep < steps.length) {
-      const timer = setTimeout(() => {
-        setArray(steps[currentStep]);
-        setCurrentStep((prev) => prev + 1);
-      }, 500);
-  
-      return () => clearTimeout(timer);
-    }
-  }, [isAutoPlaying, steps, currentStep]);  
+useEffect(() => {
+  if (!isAutoPlaying) return;
+  if (steps.length === 0) return;
+
+  if (currentStep < steps.length) {
+    const timer = setTimeout(() => {
+      setArray(steps[currentStep].array);
+      setCurrentStep((prev) => prev + 1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  } else {
+    setIsAutoPlaying(false);
+  }
+}, [isAutoPlaying, steps, currentStep]); 
+
+  const activeStep = steps[currentStep - 1];
 
   return (
     <div className="container mt-4">
@@ -177,22 +183,35 @@ function BubbleSortVisualizer() {
         {/* --- KAFELKI (PEŁNA RESPONSYWNOŚĆ) --- */}
         <div className="d-flex justify-content-center gap-3 mb-4 align-items-end flex-wrap">
           {array.map((value, idx) => (
-            <div
-              key={idx}
-              className="bg-primary text-white d-flex justify-content-center align-items-end"
-              style={{
-                height: `${getHeight(value)}px`,
-                width: `${getBarWidth()}px`,
-                fontWeight: "bold",
-                borderRadius: "8px",
-                boxShadow: "0 4px 8px rgba(0,0,0,0.25)",
-                transition: "height 0.3s ease-in-out",
-              }}
-            >
-              {value}
-            </div>
-          ))}
+  <div
+    key={idx}
+    className={`text-white d-flex justify-content-center align-items-end ${
+      activeStep?.sorted
+        ? "bg-success"
+        : activeStep?.swappedIndexes?.includes(idx)
+        ? "bg-danger"
+        : activeStep?.comparing?.includes(idx)
+        ? "bg-warning"
+        : "bg-primary"
+    }`}
+    style={{
+      height: `${getHeight(value)}px`,
+      width: `${getBarWidth()}px`,
+      fontWeight: "bold",
+      borderRadius: "8px",
+      boxShadow: "0 4px 8px rgba(0,0,0,0.25)",
+      transition: "height 0.3s ease-in-out, background-color 0.3s ease-in-out",
+    }}
+  >
+    {value}
+  </div>
+))}
         </div>
+        {activeStep?.message && (
+  <div className="text-center mb-3">
+    <strong>{activeStep.message}</strong>
+  </div>
+)}
 
         {/* KROKI SORTOWANIA */}
 
