@@ -1,7 +1,10 @@
 # AlgorithmLab — React + Node.js
 
 The project demonstrates the operation of selected algorithms through interactive visualization.
+
 Its goal is to showcase practical knowledge of algorithms and the ability to implement them in a full-stack application.
+
+Additionally, it integrates Large Language Models (LLMs) through LangChain and OpenAI to generate educational explanations and interview preparation content for users.
 
 ## 🛠 Technologies
 
@@ -21,6 +24,59 @@ Its goal is to showcase practical knowledge of algorithms and the ability to imp
 - **DevOps:** Docker & Docker Compose
   - `Docker` — containerization platform
   - `Docker Compose` — orchestration of frontend, backend and database containers
+
+## 🤖 AI-Powered Algorithm Explanations
+
+AlgorithmLab includes an AI-powered educational assistant built with LangChain and OpenAI.
+
+Users can generate detailed explanations for each implemented sorting algorithm directly from the visualization page.
+
+### Features
+
+- AI-generated algorithm explanations
+- Step-by-step analysis of the provided input array
+- Time and space complexity discussion
+- Practical use cases
+- Interview preparation questions
+- Markdown-formatted responses
+
+### Technology Stack
+
+- **LangChain** – orchestration layer for LLM interactions
+- **OpenAI GPT-4o Mini** – explanation generation
+- **React Markdown** – rendering AI-generated Markdown content
+- **Express.js** – backend API integration
+
+### Example Workflow
+
+1. User enters a custom array.
+2. User runs the sorting visualization.
+3. User clicks **"🤖 Explain with AI"**.
+4. Backend sends the algorithm name and input array to OpenAI through LangChain.
+5. AI generates:
+   - algorithm overview,
+   - execution walkthrough,
+   - complexity analysis,
+   - practical applications,
+   - interview questions.
+6. Response is displayed in formatted Markdown inside the application.
+
+### Supported Algorithms
+
+- Bubble Sort
+- Selection Sort
+- Insertion Sort
+- Merge Sort
+- Quick Sort
+- Heap Sort
+
+### Environment Variables
+
+```env
+OPENAI_API_KEY=your_openai_api_key
+```
+
+The application uses the OpenAI API through LangChain to generate educational content dynamically.
 
 ## 📂 Project Structure
 
@@ -78,8 +134,12 @@ Frontend (React + Vite)
           ▼
 Backend (Node.js + Express)
           │
-          ▼
-PostgreSQL (Docker)
+   ┌──────┴──────┐
+   ▼             ▼
+PostgreSQL    OpenAI API
+                ▲
+                │
+           LangChain
 ```
 
 The frontend communicates with the backend through REST APIs.
@@ -116,12 +176,28 @@ The backend provides `REST` endpoints for handling sorting and descriptions:
 - `GET /algorithms/:name`
   - Returns algorithm metadata and description from PostgreSQL
 
+- `POST /ai/explain`
+  - Receives algorithm name and input array
+  - Generates AI-powered explanation using LangChain and OpenAI
+
 Example:
 
-````bash
+```bash
 GET /algorithms/BubbleSort
 GET /algorithms/InsertionSort
 GET /algorithms/QuickSort
+```
+
+```bash
+POST /ai/explain
+```
+
+```json
+{
+  "algorithm": "QuickSort",
+  "array": [5, 2, 4, 3, 1]
+}
+```
 
 Rest of endpoints works in similar way:
 
@@ -131,7 +207,7 @@ POST /sort/selection
 POST /sort/merge
 POST /sort/quick
 POST /sort/heap
-````
+```
 
 ## 🐘 PostgreSQL Integration
 
@@ -183,8 +259,12 @@ Frontend (React)
        ▼
 Backend (Express API)
        │
-       ▼
-PostgreSQL
+   ┌───┴────┐
+   ▼        ▼
+PostgreSQL  OpenAI API
+             ▲
+             │
+        LangChain
 ```
 
 Start the entire application:
@@ -206,6 +286,10 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 ## ✨ Features
 
 - Interactive visualization of sorting algorithms
+- AI-powered algorithm explanations using `OpenAI` and `LangChain`
+- Algorithm walkthroughs for user-provided arrays
+- AI-generated interview questions
+- Markdown-rendered educational content
 - Step-by-step execution
 - Automatic playback mode
 - Previous / Next step navigation
@@ -318,3 +402,7 @@ npm run lint:fix
 - Modular project structure
 - React Hooks linting
 - Automated formatting scripts
+
+```
+
+```
