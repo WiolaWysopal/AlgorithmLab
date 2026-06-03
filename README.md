@@ -15,34 +15,76 @@ Its goal is to showcase practical knowledge of algorithms and the ability to imp
   - `Express` — a framework for building APIs and handling HTTP requests
   - `CORS` — middleware that allows communication between frontend and backend running on different ports
 
+- **Database:** PostgreSQL
+  - `PostgreSQL` — relational database used to store algorithm descriptions
+
+- **DevOps:** Docker & Docker Compose
+  - `Docker` — containerization platform
+  - `Docker Compose` — orchestration of frontend, backend and database containers
+
 ## 📂 Project Structure
 
 ```ascii
-frontend/
-├─ src/
-│  ├─ components/
-│  │  ├─ BubbleSortVisualizer.jsx
-│  │  ├─ HeapSortVisualizer.jsx
-│  │  ├─ InsertionSortVisualizer.jsx
-│  │  ├─ MergeSortVisualizer.jsx
-│  │  ├─ QuickSortVisualizer.jsx
-│  │  └─ SelectionSortVisualizer.jsx
-│  ├─ pages/
-│  │  └─ Home.jsx
-│  ├─ App.jsx
-│  └─ main.jsx
-
-backend/
-├─ algorithms/
-│  ├─ bubbleSort.js
-│  ├─ heapSort.js
-│  ├─ insertionSort.js
-│  ├─ mergeSort.js
-│  ├─ quickSort.js
-│  └─ selectionSort.js
-└─ server.js
-
+AlgorithmLab/
+│
+├─ frontend/
+│  ├─ src/
+│  │  ├─ components/
+│  │  │  ├─ BubbleSortVisualizer.jsx
+│  │  │  ├─ HeapSortVisualizer.jsx
+│  │  │  ├─ InsertionSortVisualizer.jsx
+│  │  │  ├─ MergeSortVisualizer.jsx
+│  │  │  ├─ QuickSortVisualizer.jsx
+│  │  │  └─ SelectionSortVisualizer.jsx
+│  │  │
+│  │  ├─ pages/
+│  │  │  └─ Home.jsx
+│  │  │
+│  │  ├─ App.jsx
+│  │  └─ main.jsx
+│  │
+│  ├─ Dockerfile
+│  ├─ package.json
+│  └─ vite.config.js
+│
+├─ backend/
+│  ├─ algorithms/
+│  │  ├─ bubbleSort.js
+│  │  ├─ heapSort.js
+│  │  ├─ insertionSort.js
+│  │  ├─ mergeSort.js
+│  │  ├─ quickSort.js
+│  │  └─ selectionSort.js
+│  │
+│  ├─ db.js
+│  ├─ init.sql
+│  ├─ server.js
+│  ├─ Dockerfile
+│  └─ package.json
+│
+├─ docker-compose.yml
+├─ .gitignore
+├─ .prettierrc
+├─ .prettierignore
+├─ eslint.config.js
+└─ README.md
 ```
+
+### Project Architecture
+
+```text
+Frontend (React + Vite)
+          │
+          ▼
+Backend (Node.js + Express)
+          │
+          ▼
+PostgreSQL (Docker)
+```
+
+The frontend communicates with the backend through REST APIs.
+The backend executes sorting algorithms, retrieves algorithm descriptions from PostgreSQL, and returns data to the frontend.
+Docker Compose orchestrates all application services.
 
 ## 🌐 Routing in React
 
@@ -71,9 +113,15 @@ The backend provides `REST` endpoints for handling sorting and descriptions:
   - Receives `JSON { array: [5,2,4,3] }`
   - Returns the sorting steps and the sorted array
 
-- `GET /description/insertion` (_future feature_)
-  - Will return a text description of the algorithm
-  - Can be later connected to a database (Supabase, MongoDB Atlas, etc.)
+- `GET /algorithms/:name`
+  - Returns algorithm metadata and description from PostgreSQL
+
+Example:
+
+````bash
+GET /algorithms/BubbleSort
+GET /algorithms/InsertionSort
+GET /algorithms/QuickSort
 
 Rest of endpoints works in similar way:
 
@@ -83,65 +131,73 @@ POST /sort/selection
 POST /sort/merge
 POST /sort/quick
 POST /sort/heap
+````
+
+## 🐘 PostgreSQL Integration
+
+Algorithm descriptions are stored in a PostgreSQL database running in Docker.
+
+The backend connects to PostgreSQL using the `pg` package and exposes a REST endpoint:
+
+```bash
+GET /algorithms/:name
 ```
 
-## ⚡ Supabase Integration
+Example:
 
-This project uses [Supabase](https://supabase.com/) as a backend to store algorithm descriptions. The `InsertionSortVisualizer` component fetches the description of the algorithm from the Supabase database and displays it above the input field.
-
-### Setup
-
-1. Create a Supabase project and a table called `algorithms` with columns:
-   - `id` (uuid or serial)
-   - `name` (text)
-   - `description` (text)
-   - `category` (text)
-
-2. Insert data into the table, for example:
-
-```sql
-INSERT INTO public.algorithms (id, name, description, category)
-VALUES ('1', 'InsertionSort', 'Insertion Sort is a simple way to sort a list of numbers...', 'Sorting');
+```bash
+GET /algorithms/QuickSort
 ```
 
-3. Enable Row Level Security (RLS) and create a policy to allow public read access:
+Response:
 
-```sql
-create policy "Allow read for everyone" on public.algorithms
-for select using (true);
+```json
+{
+  "id": 5,
+  "name": "QuickSort",
+  "description": "Quick Sort is a sorting algorithm..."
+}
 ```
 
-4. Add your Supabase credentials in the `.env` file in your frontend folder:
+Database initialization is handled automatically using:
 
-```sql
-VITE_SUPABASE_URL=your-supabase-url
-VITE_SUPABASE_ANON_KEY=your-anon-key
+```text
+backend/init.sql
 ```
 
-## ⏰ Keep Supabase Project Awake
+which creates the `algorithms` table and inserts default descriptions for all supported algorithms.
 
-Since free Supabase projects can be suspended after a period of inactivity, a GitHub Actions workflow is used to keep the project alive by pinging it periodically.
+## 🐳 Docker Setup
 
-The workflow file is located at `.github/workflows/supabase-keepalive.yml`:
+The application runs using Docker Compose and consists of three containers:
 
-```yml
-name: Keep Supabase awake
+- Frontend (React + Vite)
+- Backend (Node.js + Express)
+- PostgreSQL
 
-on:
-  schedule:
-    - cron: "0 * * * *" # every hour
-  workflow_dispatch:
+Architecture:
 
-jobs:
-  ping:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ping Supabase
-        run: |
-          curl -I "https://YOUR-PROJECT-ID.supabase.co/rest/v1/algorithms"
+```text
+Frontend (React)
+       │
+       ▼
+Backend (Express API)
+       │
+       ▼
+PostgreSQL
 ```
 
-This workflow sends an HTTP request to Supabase every hour to prevent the project from being suspended. You can also manually trigger it via the Actions tab in GitHub.
+Start the entire application:
+
+```bash
+docker compose up --build
+```
+
+Stop containers:
+
+```bash
+docker compose down
+```
 
 ## 🖼️ Favicon
 
@@ -153,7 +209,8 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 - Step-by-step execution
 - Automatic playback mode
 - Previous / Next step navigation
-- Dynamic algorithm descriptions from Supabase
+- Dynamic algorithm descriptions from PostgreSQL
+- Dockerized frontend, backend, and database
 - Responsive UI built with Bootstrap
 - Multiple sorting algorithms:
   - Bubble Sort
@@ -162,28 +219,36 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
   - Merge Sort
   - Quick Sort
   - Heap Sort
+- PostgreSQL-backed algorithm descriptions
+- REST API for algorithm metadata
+- Docker Compose local environment
+- Home navigation shortcut in navbar
 
 ## 🏃‍♂️ Running the project
 
-#### **Backend**
-
-Being in project root directory:
+Start the entire application:
 
 ```bash
-cd backend
-node server.js
+docker compose up --build
 ```
 
-#### **Frontend**
+Frontend:
 
-Being in project root directory:
-
-```bash
-cd frontend
-npm run dev
+```text
+http://localhost:5173
 ```
 
-Open your browser at `http://localhost:5173`.
+Backend:
+
+```text
+http://localhost:5000
+```
+
+PostgreSQL:
+
+```text
+localhost:5432
+```
 
 ## 🎨 Code Formatting
 
