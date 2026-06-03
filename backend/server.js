@@ -1,3 +1,6 @@
+require("dotenv").config();
+const { ChatOpenAI } = require("@langchain/openai");
+
 const express = require("express");
 const cors = require("cors");
 
@@ -99,6 +102,46 @@ app.post("/sort/heap", (req, res) => {
   }
   const result = heapSort(array);
   res.json(result);
+});
+
+// LangChain - API GPT
+
+app.post("/ai/explain", async (req, res) => {
+  try {
+    const { algorithm, array } = req.body;
+
+    if (!algorithm || !Array.isArray(array)) {
+      return res.status(400).json({
+        error: "Algorithm name and array are required",
+      });
+    }
+
+    const model = new ChatOpenAI({
+      model: "gpt-4o-mini",
+      temperature: 0.3,
+      apiKey: process.env.OPENAI_API_KEY,
+    });
+
+    const response = await model.invoke(`
+Explain the ${algorithm} algorithm for this input array: [${array.join(", ")}].
+
+Return the answer in this structure:
+1. Simple explanation
+2. What happens with this specific array
+3. Time complexity
+4. When to use it
+5. Three interview questions
+`);
+
+    res.json({
+      explanation: response.content,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: error.message,
+    });
+  }
 });
 
 app.listen(5000, () => {
