@@ -125,12 +125,23 @@ app.post("/ai/explain", async (req, res) => {
     const response = await model.invoke(`
 Explain the ${algorithm} algorithm for this input array: [${array.join(", ")}].
 
-Return the answer in this structure:
-1. Simple explanation
-2. What happens with this specific array
-3. Time complexity
-4. When to use it
-5. Three interview questions
+Return the answer in Markdown using exactly this structure:
+
+### 1. Simple Explanation
+Explain the algorithm in beginner-friendly language.
+
+### 2. What Happens With This Specific Array
+Describe how the algorithm works on this exact array.
+
+### 3. Time Complexity
+Include best, average, and worst case.
+
+### 4. When To Use It
+Explain practical use cases and limitations.
+
+### 5. Interview Questions With Answers
+Provide exactly three interview questions.
+For each question, include a short example answer.
 `);
 
     res.json({
