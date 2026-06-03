@@ -1,10 +1,4 @@
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-// --- KONFIGURACJA SUPABASE Z .ENV ---
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 function MergeSortVisualizer() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
@@ -27,29 +21,19 @@ function MergeSortVisualizer() {
   };
   const getBarWidth = () => Math.min(60, Math.max(15, 300 / array.length));
 
-  // --- POBIERANIE OPISU Z SUPABASE (BEZ .single()) ---
+  // --- POBIERANIE OPISU Z DB (PostgreSQL przez backend) ---
   useEffect(() => {
     const fetchDescription = async () => {
       try {
-        // pobieramy description i id, aby mieć pewność, że jest w wyniku
-        const { data, error } = await supabase
-          .from("algorithms")
-          .select("id, description, name")
-          .eq("name", "MergeSort");
+        const res = await fetch("http://localhost:5000/algorithms/MergeSort");
 
-        if (error) {
-          console.error("Error fetching description:", error.message);
+        if (!res.ok) {
           setDescription("No description in the database");
           return;
         }
 
-        if (data && data.length > 0) {
-          console.log("Fetched data from Supabase:", data);
-          setDescription(data[0].description);
-        } else {
-          console.warn("No data found for MergeSort");
-          setDescription("No description in the database");
-        }
+        const data = await res.json();
+        setDescription(data.description || "No description in the database");
       } catch (err) {
         console.error("Unexpected error fetching description:", err);
         setDescription("No description in the database");
