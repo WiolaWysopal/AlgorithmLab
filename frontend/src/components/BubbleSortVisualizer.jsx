@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
 
 function BubbleSortVisualizer() {
   const [isAutoPlaying, setIsAutoPlaying] = useState(false);
@@ -8,6 +9,11 @@ function BubbleSortVisualizer() {
   const [steps, setSteps] = useState([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [description, setDescription] = useState(""); // opis algorytmu
+
+  // AI LangChain
+  const [aiExplanation, setAiExplanation] = useState("");
+  const [isAiLoading, setIsAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");
 
   // --- WYLICZANIE SKALOWANEJ WYSOKOŚCI ---
   const minValue = Math.min(...array);
@@ -57,11 +63,13 @@ function BubbleSortVisualizer() {
       return;
     }
 
-    setInitialArray(parsed); // 🔹 zapamiętujemy oryginał
+    setInitialArray(parsed); // zapamiętujemy oryginał
     setArray(parsed);
     setSteps([]);
     setCurrentStep(0);
     setIsAutoPlaying(false);
+    setAiExplanation("");
+    setAiError("");
   };
 
   // --- SORTOWANIE ---
@@ -107,6 +115,43 @@ function BubbleSortVisualizer() {
     setArray(initialArray);
     setSteps([]);
     setCurrentStep(0);
+    setAiExplanation("");
+    setAiError("");
+  };
+
+  // AI LangChain
+
+  const handleAiExplain = async () => {
+    setIsAiLoading(true);
+    setAiError("");
+    setAiExplanation("");
+
+    try {
+      const res = await fetch("http://localhost:5000/ai/explain", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          algorithm: "BubbleSort",
+          array: initialArray,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAiError(data.error || "Failed to generate AI explanation.");
+        return;
+      }
+
+      setAiExplanation(data.explanation);
+    } catch (err) {
+      console.error("Unexpected error fetching AI explanation:", err);
+      setAiError("Failed to connect to AI service.");
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   // --- WIZUALIZACJA KROKÓW ---
@@ -232,7 +277,24 @@ function BubbleSortVisualizer() {
           <button className="btn btn-outline-danger" onClick={() => setIsAutoPlaying(false)}>
             ⏸ Pause
           </button>
+          <button className="btn btn-outline-dark" onClick={handleAiExplain} disabled={isAiLoading}>
+            {isAiLoading ? "Generating..." : "🤖 Explain with AI"}
+          </button>
         </div>
+        {aiError && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {aiError}
+          </div>
+        )}
+
+        {aiExplanation && (
+          <div className="card mt-4 border-dark">
+            <div className="card-header fw-bold">🤖 AI Explanation</div>
+            <div className="card-body">
+              <ReactMarkdown>{aiExplanation}</ReactMarkdown>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
