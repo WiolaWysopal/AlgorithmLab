@@ -8,6 +8,8 @@ const mergeSort = require("./algorithms/mergeSort");
 const quickSort = require("./algorithms/quickSort");
 const heapSort = require("./algorithms/heapSort");
 
+const pool = require("./db");
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -15,6 +17,26 @@ app.use(express.json());
 // test endpoint
 app.get("/", (req, res) => {
   res.send("AlgorithmLab backend works");
+});
+
+app.get("/algorithms/:name", async (req, res) => {
+  try {
+    const { name } = req.params;
+
+    const result = await pool.query(
+      "SELECT id, name, description FROM algorithms WHERE name = $1",
+      [name]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "Algorithm not found" });
+    }
+
+    res.json(result.rows[0]);
+  } catch (error) {
+    console.error("Error fetching algorithm description:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 // Endpoint dla Insertion Sort

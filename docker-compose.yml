@@ -10,6 +10,13 @@ services:
       - /app/node_modules
     environment:
       - PORT=5000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=algorithmlab
+      - DB_PASSWORD=algorithmlab
+      - DB_NAME=algorithmlab
+    depends_on:
+      - postgres
 
   frontend:
     build:
@@ -22,3 +29,20 @@ services:
       - /app/node_modules
     depends_on:
       - backend
+
+  postgres:
+    image: postgres:16
+    container_name: algorithmlab_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: algorithmlab
+      POSTGRES_PASSWORD: algorithmlab
+      POSTGRES_DB: algorithmlab
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  postgres_data:
