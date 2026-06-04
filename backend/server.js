@@ -1,6 +1,9 @@
 require("dotenv").config();
 const { ChatOpenAI } = require("@langchain/openai");
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./swagger");
+
 const express = require("express");
 const cors = require("cors");
 
@@ -16,10 +19,22 @@ const pool = require("./db");
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // test endpoint
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Check if backend is running
+ *     tags:
+ *       - Health
+ *     responses:
+ *       200:
+ *         description: Backend is running
+ */
 app.get("/", (req, res) => {
-  res.send("AlgorithmLab backend works");
+  res.send("AlgorithmLab backend is running");
 });
 
 app.get("/algorithms/:name", async (req, res) => {
