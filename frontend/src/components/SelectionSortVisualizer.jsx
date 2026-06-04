@@ -283,8 +283,23 @@ function SelectionSortVisualizer() {
           <button className="btn btn-outline-danger" onClick={() => setIsAutoPlaying(false)}>
             ⏸ Pause
           </button>
-          <button className="btn btn-outline-dark" onClick={handleAiExplain} disabled={isAiLoading}>
-            {isAiLoading ? "Generating..." : "🤖 Explain with AI"}
+          <button
+            className="btn btn-outline-dark ai-generate-btn"
+            onClick={handleAiExplain}
+            disabled={isAiLoading}
+          >
+            {isAiLoading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Generating...
+              </>
+            ) : (
+              "🤖 Explain with AI"
+            )}
           </button>
         </div>
         {aiError && <div className="alert alert-danger mt-3">{aiError}</div>}
