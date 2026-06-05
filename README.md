@@ -17,6 +17,8 @@ Additionally, it integrates Large Language Models (LLMs) through LangChain and O
   - `Node.js` — a JavaScript runtime environment for server-side development
   - `Express` — a framework for building APIs and handling HTTP requests
   - `CORS` — middleware that allows communication between frontend and backend running on different ports
+  - `Swagger UI` — interactive REST API documentation
+  - `swagger-jsdoc` — OpenAPI specification generation from JSDoc comments
 
 - **Database:** PostgreSQL
   - `PostgreSQL` — relational database used to store algorithm descriptions
@@ -209,6 +211,14 @@ POST /sort/quick
 POST /sort/heap
 ```
 
+### API Documentation
+
+Interactive API documentation is available through Swagger UI:
+
+```text
+http://localhost:5000/api-docs
+```
+
 ## 🐘 PostgreSQL Integration
 
 Algorithm descriptions are stored in a PostgreSQL database running in Docker.
@@ -305,6 +315,7 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
   - Heap Sort
 - PostgreSQL-backed algorithm descriptions
 - REST API for algorithm metadata
+- Interactive API documentation with Swagger UI
 - Docker Compose local environment
 - Home navigation shortcut in navbar
 
@@ -326,6 +337,12 @@ Backend:
 
 ```text
 http://localhost:5000
+```
+
+Swagger UI:
+
+```text
+http://localhost:5000/api-docs
 ```
 
 PostgreSQL:
@@ -402,7 +419,3 @@ npm run lint:fix
 - Modular project structure
 - React Hooks linting
 - Automated formatting scripts
-
-```
-
-```
