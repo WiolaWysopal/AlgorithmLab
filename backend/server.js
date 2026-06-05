@@ -15,6 +15,13 @@ const quickSort = require("./algorithms/quickSort");
 const heapSort = require("./algorithms/heapSort");
 
 const pool = require("./db");
+const model = new ChatOpenAI({
+  model: "gpt-4o-mini",
+  temperature: 0.3,
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+const aiExplanationCache = new Map();
 
 const app = express();
 app.use(cors());
@@ -347,11 +354,14 @@ app.post("/ai/explain", async (req, res) => {
       });
     }
 
-    const model = new ChatOpenAI({
-      model: "gpt-4o-mini",
-      temperature: 0.3,
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    const cacheKey = `${algorithm}:${array.join(",")}`;
+
+    if (aiExplanationCache.has(cacheKey)) {
+      return res.json({
+        explanation: aiExplanationCache.get(cacheKey),
+        cached: true,
+      });
+    }
 
     const response = await model.invoke(`
 Explain the ${algorithm} algorithm for this input array: [${array.join(", ")}].
@@ -375,8 +385,11 @@ Provide exactly three interview questions.
 For each question, include a short example answer.
 `);
 
+    aiExplanationCache.set(cacheKey, response.content);
+
     res.json({
       explanation: response.content,
+      cached: false,
     });
   } catch (error) {
     console.error(error);
