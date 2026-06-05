@@ -37,6 +37,28 @@ app.get("/", (req, res) => {
   res.send("AlgorithmLab backend is running");
 });
 
+/**
+ * @swagger
+ * /algorithms/{name}:
+ *   get:
+ *     summary: Get algorithm description by name
+ *     tags:
+ *       - Algorithms
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: QuickSort
+ *     responses:
+ *       200:
+ *         description: Algorithm description returned successfully
+ *       404:
+ *         description: Algorithm not found
+ *       500:
+ *         description: Internal server error
+ */
 app.get("/algorithms/:name", async (req, res) => {
   try {
     const { name } = req.params;
@@ -58,6 +80,33 @@ app.get("/algorithms/:name", async (req, res) => {
 });
 
 // Endpoint dla Insertion Sort
+/**
+ * @swagger
+ * /sort/insertion:
+ *   post:
+ *     summary: Execute Insertion Sort
+ *     tags:
+ *       - Sorting Algorithms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - array
+ *             properties:
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: Sorting steps returned successfully
+ *       400:
+ *         description: Invalid input - array is required
+ */
 app.post("/sort/insertion", (req, res) => {
   const { array } = req.body;
   if (!Array.isArray(array)) {
@@ -68,6 +117,33 @@ app.post("/sort/insertion", (req, res) => {
 });
 
 // Endpoint dla Bubble Sort
+/**
+ * @swagger
+ * /sort/bubble:
+ *   post:
+ *     summary: Execute Bubble Sort
+ *     tags:
+ *       - Sorting Algorithms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - array
+ *             properties:
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: Sorting steps returned successfully
+ *       400:
+ *         description: Invalid input - array is required
+ */
 app.post("/sort/bubble", (req, res) => {
   const { array } = req.body;
   if (!Array.isArray(array)) {
@@ -78,6 +154,33 @@ app.post("/sort/bubble", (req, res) => {
 });
 
 // Endpoint dla Selection Sort
+/**
+ * @swagger
+ * /sort/selection:
+ *   post:
+ *     summary: Execute Selection Sort
+ *     tags:
+ *       - Sorting Algorithms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - array
+ *             properties:
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: Sorting steps returned successfully
+ *       400:
+ *         description: Invalid input - array is required
+ */
 app.post("/sort/selection", (req, res) => {
   const { array } = req.body;
   if (!Array.isArray(array)) {
@@ -88,6 +191,33 @@ app.post("/sort/selection", (req, res) => {
 });
 
 // Endpoint dla Merge Sort
+/**
+ * @swagger
+ * /sort/merge:
+ *   post:
+ *     summary: Execute Merge Sort
+ *     tags:
+ *       - Sorting Algorithms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - array
+ *             properties:
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: Sorting steps returned successfully
+ *       400:
+ *         description: Invalid input - array is required
+ */
 app.post("/sort/merge", (req, res) => {
   const { array } = req.body;
 
@@ -100,6 +230,33 @@ app.post("/sort/merge", (req, res) => {
 });
 
 // Endpoint dla Quick Sort
+/**
+ * @swagger
+ * /sort/quick:
+ *   post:
+ *     summary: Execute Quick Sort
+ *     tags:
+ *       - Sorting Algorithms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - array
+ *             properties:
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: Sorting steps returned successfully
+ *       400:
+ *         description: Invalid input - array is required
+ */
 app.post("/sort/quick", (req, res) => {
   const { array } = req.body;
   if (!Array.isArray(array)) {
@@ -110,6 +267,33 @@ app.post("/sort/quick", (req, res) => {
 });
 
 // Endpoint dla Heap Sort
+/**
+ * @swagger
+ * /sort/heap:
+ *   post:
+ *     summary: Execute Heap Sort
+ *     tags:
+ *       - Sorting Algorithms
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - array
+ *             properties:
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: Sorting steps returned successfully
+ *       400:
+ *         description: Invalid input - array is required
+ */
 app.post("/sort/heap", (req, res) => {
   const { array } = req.body;
   if (!Array.isArray(array)) {
@@ -120,7 +304,39 @@ app.post("/sort/heap", (req, res) => {
 });
 
 // LangChain - API GPT
-
+/**
+ * @swagger
+ * /ai/explain:
+ *   post:
+ *     summary: Generate AI explanation for a sorting algorithm
+ *     tags:
+ *       - AI
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - algorithm
+ *               - array
+ *             properties:
+ *               algorithm:
+ *                 type: string
+ *                 example: QuickSort
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: AI explanation generated successfully
+ *       400:
+ *         description: Invalid input - algorithm and array are required
+ *       500:
+ *         description: AI service error
+ */
 app.post("/ai/explain", async (req, res) => {
   try {
     const { algorithm, array } = req.body;
