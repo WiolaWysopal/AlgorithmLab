@@ -136,17 +136,61 @@ Frontend (React + Vite)
           ▼
 Backend (Node.js + Express)
           │
-   ┌──────┴──────┐
-   ▼             ▼
-PostgreSQL    OpenAI API
-                ▲
-                │
-           LangChain
+   ┌──────┼────────┐
+   ▼      ▼        ▼
+PostgreSQL Cache  OpenAI API
+             ▲
+             │
+        LangChain
 ```
 
 The frontend communicates with the backend through REST APIs.
 The backend executes sorting algorithms, retrieves algorithm descriptions from PostgreSQL, and returns data to the frontend.
 Docker Compose orchestrates all application services.
+
+## ⚡ AI Performance Optimizations
+
+To improve response times and reduce unnecessary OpenAI API calls, AlgorithmLab includes several backend optimizations.
+
+### Shared OpenAI Model Instance
+
+The LangChain `ChatOpenAI` client is initialized once during server startup and reused across all requests.
+
+Benefits:
+
+- lower request overhead
+- reduced object creation cost
+- faster response generation
+
+### In-Memory AI Cache
+
+Generated explanations are cached using a JavaScript `Map`.
+
+When a user requests an explanation for the same algorithm and input array, the backend returns the cached response instead of calling OpenAI again.
+
+Example cache key:
+
+```text
+QuickSort:5,2,4,3,1
+```
+
+Workflow:
+
+1. User requests an AI explanation.
+2. Backend generates a cache key from the algorithm name and input array.
+3. If the explanation already exists in cache:
+   - cached response is returned immediately.
+4. Otherwise:
+   - OpenAI generates a new explanation,
+   - the response is stored in cache,
+   - the generated explanation is returned to the user.
+
+Benefits:
+
+- significantly faster repeated requests
+- reduced OpenAI API usage
+- lower operational costs
+- improved user experience
 
 ## 🌐 Routing in React
 
@@ -314,8 +358,9 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 
 - Interactive visualization of sorting algorithms
 - AI-powered algorithm explanations using `OpenAI` and `LangChain`
-- Algorithm walkthroughs for user-provided arrays
+- In-memory AI response caching for repeated requests
 - AI-generated interview questions
+- Algorithm walkthroughs for user-provided arrays
 - Markdown-rendered educational content
 - Step-by-step execution
 - Automatic playback mode
