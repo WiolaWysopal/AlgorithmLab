@@ -22,6 +22,7 @@ const model = new ChatOpenAI({
 });
 
 const aiExplanationCache = new Map();
+const aiQuizCache = new Map();
 
 const app = express();
 app.use(cors());
@@ -389,6 +390,95 @@ For each question, include a short example answer.
 
     res.json({
       explanation: response.content,
+      cached: false,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /ai/quiz:
+ *   post:
+ *     summary: Generate AI quiz for a sorting algorithm
+ *     tags:
+ *       - AI
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - algorithm
+ *               - array
+ *             properties:
+ *               algorithm:
+ *                 type: string
+ *                 example: BubbleSort
+ *               array:
+ *                 type: array
+ *                 items:
+ *                   type: number
+ *                 example: [5, 2, 4, 3, 1]
+ *     responses:
+ *       200:
+ *         description: AI quiz generated successfully
+ *       400:
+ *         description: Invalid input - algorithm and array are required
+ *       500:
+ *         description: AI service error
+ */
+app.post("/ai/quiz", async (req, res) => {
+  try {
+    const { algorithm, array } = req.body;
+
+    if (!algorithm || !Array.isArray(array)) {
+      return res.status(400).json({
+        error: "Algorithm name and array are required",
+      });
+    }
+
+    const cacheKey = `${algorithm}:${array.join(",")}`;
+
+    if (aiQuizCache.has(cacheKey)) {
+      return res.json({
+        quiz: aiQuizCache.get(cacheKey),
+        cached: true,
+      });
+    }
+
+    const response = await model.invoke(`
+Create a short educational quiz about the ${algorithm} algorithm for this input array: [${array.join(", ")}].
+
+Return the answer in Markdown using exactly this structure:
+
+### Algorithm Quiz: ${algorithm}
+
+Create exactly 5 questions.
+
+For each question include:
+- the question,
+- four answer options: A, B, C, D,
+- the correct answer,
+- a short explanation.
+
+The questions should test:
+- algorithm behavior,
+- time complexity,
+- step-by-step execution,
+- practical use cases,
+- interview-style understanding.
+`);
+
+    aiQuizCache.set(cacheKey, response.content);
+
+    res.json({
+      quiz: response.content,
       cached: false,
     });
   } catch (error) {
