@@ -289,6 +289,23 @@ Stop containers:
 docker compose down
 ```
 
+## ⚙️ CI / GitHub Actions
+
+This project uses GitHub Actions to automatically run quality checks on push and pull requests.
+
+The workflow checks:
+
+- dependency installation
+- Prettier formatting
+- ESLint code quality
+- frontend production build
+
+Workflow file:
+
+```text
+.github/workflows/quality-checks.yml
+```
+
 ## 🖼️ Favicon
 
 The application’s avatar (favicon) was generated using `Craion`, an AI-powered tool that creates images based on short text prompts. Craion uses generative models to produce graphics in various styles, making it easy to generate simple illustrations, icons, or visual concepts. The image used in this project was created specifically for the application and does not depict any real persons or objects.
