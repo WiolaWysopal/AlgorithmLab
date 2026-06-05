@@ -27,7 +27,7 @@ Additionally, it integrates Large Language Models (LLMs) through LangChain and O
   - `Docker` — containerization platform
   - `Docker Compose` — orchestration of frontend, backend and database containers
 
-## 🤖 AI-Powered Algorithm Explanations
+## 🤖 AI-Powered Learning Assistant
 
 AlgorithmLab includes an AI-powered educational assistant built with LangChain and OpenAI.
 
@@ -36,10 +36,12 @@ Users can generate detailed explanations for each implemented sorting algorithm 
 ### Features
 
 - AI-generated algorithm explanations
+- AI-generated quizzes for self-assessment
 - Step-by-step analysis of the provided input array
 - Time and space complexity discussion
 - Practical use cases
 - Interview preparation questions
+- Knowledge-check questions with answers
 - Markdown-formatted responses
 
 ### Technology Stack
@@ -62,6 +64,34 @@ Users can generate detailed explanations for each implemented sorting algorithm 
    - practical applications,
    - interview questions.
 6. Response is displayed in formatted Markdown inside the application.
+
+### AI Quiz Generator
+
+AlgorithmLab includes an AI-powered quiz generator that helps users verify their understanding of sorting algorithms.
+
+Users can generate quizzes directly from the visualization page after exploring an algorithm.
+
+### Quiz Features
+
+- AI-generated knowledge checks
+- Algorithm-specific questions
+- Multiple difficulty levels
+- Answer explanations
+- Interview-style questions
+- Markdown-formatted output
+
+### Quiz Workflow
+
+1. User explores a sorting algorithm.
+2. User clicks **"🧠 Generate Quiz"**.
+3. Backend sends the algorithm name and input array to OpenAI through LangChain.
+4. AI generates:
+   - multiple-choice questions,
+   - conceptual questions,
+   - complexity-related questions,
+   - practical scenario questions,
+   - answer explanations.
+5. Quiz is displayed directly in the application.
 
 ### Supported Algorithms
 
@@ -226,6 +256,10 @@ The backend provides `REST` endpoints for handling sorting and descriptions:
   - Receives algorithm name and input array
   - Generates AI-powered explanation using LangChain and OpenAI
 
+- `POST /ai/quiz`
+  - Receives algorithm name and input array
+  - Generates an AI-powered quiz using LangChain and OpenAI
+
 Example:
 
 ```bash
@@ -253,6 +287,8 @@ POST /sort/selection
 POST /sort/merge
 POST /sort/quick
 POST /sort/heap
+POST /ai/explain
+POST /ai/quiz
 ```
 
 ### API Documentation
@@ -358,8 +394,10 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 
 - Interactive visualization of sorting algorithms
 - AI-powered algorithm explanations using `OpenAI` and `LangChain`
-- In-memory AI response caching for repeated requests
-- AI-generated interview questions
+- AI-powered quiz generation
+- AI-generated knowledge checks
+- AI-generated interview questions and answers
+- In-memory AI caching for explanations and quizzes
 - Algorithm walkthroughs for user-provided arrays
 - Markdown-rendered educational content
 - Step-by-step execution
