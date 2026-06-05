@@ -14,6 +14,9 @@ function HeapSortVisualizer() {
   const [aiExplanation, setAiExplanation] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
+  const [aiQuiz, setAiQuiz] = useState("");
+  const [isQuizLoading, setIsQuizLoading] = useState(false);
+  const [quizError, setQuizError] = useState("");
 
   // --- WYLICZANIE SKALOWANEJ WYSOKOŚCI ---
   const minValue = Math.min(...array);
@@ -69,6 +72,8 @@ function HeapSortVisualizer() {
     setIsAutoPlaying(false);
     setAiExplanation("");
     setAiError("");
+    setAiQuiz("");
+    setQuizError("");
   };
 
   // --- SORTOWANIE ---
@@ -116,6 +121,8 @@ function HeapSortVisualizer() {
     setIsAutoPlaying(false);
     setAiExplanation("");
     setAiError("");
+    setAiQuiz("");
+    setQuizError("");
   };
 
   const handleAiExplain = async () => {
@@ -148,6 +155,39 @@ function HeapSortVisualizer() {
       setAiError("Failed to connect to AI service.");
     } finally {
       setIsAiLoading(false);
+    }
+  };
+
+  const handleAiQuiz = async () => {
+    setIsQuizLoading(true);
+    setQuizError("");
+    setAiQuiz("");
+
+    try {
+      const res = await fetch("http://localhost:5000/ai/quiz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          algorithm: "HeapSort",
+          array: initialArray,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setQuizError(data.error || "Failed to generate AI quiz.");
+        return;
+      }
+
+      setAiQuiz(data.quiz);
+    } catch (err) {
+      console.error("Unexpected error fetching AI quiz:", err);
+      setQuizError("Failed to connect to AI quiz service.");
+    } finally {
+      setIsQuizLoading(false);
     }
   };
 
@@ -295,10 +335,35 @@ function HeapSortVisualizer() {
               "🤖 Explain with AI"
             )}
           </button>
+
+          <button
+            className="btn btn-outline-dark ai-generate-btn"
+            onClick={handleAiQuiz}
+            disabled={isQuizLoading}
+          >
+            {isQuizLoading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Generating quiz...
+              </>
+            ) : (
+              "🧠 Generate Quiz"
+            )}
+          </button>
         </div>
         {aiError && (
           <div className="alert alert-danger mt-3" role="alert">
             {aiError}
+          </div>
+        )}
+
+        {quizError && (
+          <div className="alert alert-danger mt-3" role="alert">
+            {quizError}
           </div>
         )}
 
@@ -307,6 +372,14 @@ function HeapSortVisualizer() {
             <div className="card-header fw-bold">🤖 AI Explanation</div>
             <div className="card-body">
               <ReactMarkdown>{aiExplanation}</ReactMarkdown>
+            </div>
+          </div>
+        )}
+        {aiQuiz && (
+          <div className="card mt-4 border-primary">
+            <div className="card-header fw-bold">🧠 AI Quiz</div>
+            <div className="card-body">
+              <ReactMarkdown>{aiQuiz}</ReactMarkdown>
             </div>
           </div>
         )}
