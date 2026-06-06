@@ -162,6 +162,7 @@ AlgorithmLab/
 │  │  │  └─ SelectionSortVisualizer.jsx
 │  │  │
 │  │  ├─ pages/
+│  │  │  ├─ AiAssistant.jsx
 │  │  │  └─ Home.jsx
 │  │  │
 │  │  ├─ App.jsx
@@ -183,8 +184,20 @@ AlgorithmLab/
 │  ├─ db.js
 │  ├─ init.sql
 │  ├─ server.js
+│  ├─ swagger.js
 │  ├─ Dockerfile
 │  └─ package.json
+│
+├─ k8s/
+│  ├─ namespace.yaml
+│  ├─ configmap.yaml
+│  ├─ secret.example.yaml
+│  ├─ postgres-deployment.yaml
+│  ├─ postgres-service.yaml
+│  ├─ backend-deployment.yaml
+│  ├─ backend-service.yaml
+│  ├─ frontend-deployment.yaml
+│  └─ frontend-service.yaml
 │
 ├─ docker-compose.yml
 ├─ .gitignore
@@ -202,12 +215,16 @@ Frontend (React + Vite)
           ▼
 Backend (Node.js + Express)
           │
-   ┌──────┼────────┐
-   ▼      ▼        ▼
-PostgreSQL Cache  OpenAI API
-             ▲
-             │
-        LangChain
+   ┌──────┼────────────┬────────────┐
+   ▼      ▼            ▼            ▼
+PostgreSQL Cache   OpenAI API   Swagger UI
+   │                   ▲
+   │                   │
+   ├─ algorithm data   │
+   ├─ embeddings       │
+   └─ AI history       │
+                       │
+                  LangChain
 ```
 
 The frontend communicates with the backend through REST APIs.
@@ -257,6 +274,35 @@ Benefits:
 - reduced OpenAI API usage
 - lower operational costs
 - improved user experience
+
+## 🧠 AI Assistant Features
+
+The AI Assistant combines Retrieval-Augmented Generation (RAG), semantic search, and conversation persistence.
+
+### RAG Pipeline
+
+1. User submits a question.
+2. OpenAI embeddings are generated for the question.
+3. Algorithm descriptions stored in PostgreSQL are compared using cosine similarity.
+4. The most relevant algorithms are selected as context.
+5. LangChain and OpenAI generate a grounded response.
+6. Retrieved sources are returned together with similarity scores.
+
+### Conversation History
+
+Every AI Assistant interaction is stored in PostgreSQL.
+
+Stored information:
+
+- User question
+- Generated answer
+- Retrieved sources
+- Timestamp
+
+Recent conversations can be retrieved through:
+
+````http
+GET /ai/conversations
 
 ## 🌐 Routing in React
 
@@ -308,7 +354,7 @@ Example:
 GET /algorithms/BubbleSort
 GET /algorithms/InsertionSort
 GET /algorithms/QuickSort
-```
+````
 
 ```bash
 POST /ai/explain
@@ -386,17 +432,21 @@ The application runs using Docker Compose and consists of three containers:
 Architecture:
 
 ```text
-Frontend (React)
-       │
-       ▼
-Backend (Express API)
-       │
-   ┌───┴────┐
-   ▼        ▼
-PostgreSQL  OpenAI API
-             ▲
-             │
-        LangChain
+Frontend (React + Vite)
+          │
+          ▼
+Backend (Node.js + Express)
+          │
+   ┌──────┼────────────┬────────────┐
+   ▼      ▼            ▼            ▼
+PostgreSQL Cache   OpenAI API   Swagger UI
+   │                   ▲
+   │                   │
+   ├─ algorithm data   │
+   ├─ embeddings       │
+   └─ AI history       │
+                       │
+                  LangChain
 ```
 
 Start the entire application:
@@ -550,6 +600,11 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 - AI-generated knowledge checks
 - AI-generated interview questions and answers
 - In-memory AI caching for explanations and quizzes
+- RAG-based AI assistant powered by OpenAI embeddings and LangChain
+- Semantic search over algorithm knowledge stored in PostgreSQL
+- AI conversation history stored in PostgreSQL
+- Retrieval of recent AI assistant conversations
+- Source attribution for AI-generated answers
 - Algorithm walkthroughs for user-provided arrays
 - Markdown-rendered educational content
 - Step-by-step execution
