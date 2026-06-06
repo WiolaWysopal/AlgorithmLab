@@ -661,6 +661,7 @@ Return the answer in Markdown.
       sources: relevantAlgorithms.map((algorithm) => ({
         name: algorithm.name,
         similarity: Number(algorithm.score.toFixed(4)),
+        excerpt: algorithm.description.slice(0, 200) + "...",
       })),
     });
   } catch (error) {

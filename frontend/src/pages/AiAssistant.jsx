@@ -137,7 +137,10 @@ function AiAssistant() {
                 <div className="col-md-4" key={source.name}>
                   <div className="border rounded p-3 h-100">
                     <h6 className="fw-bold mb-2">{source.name}</h6>
-                    <span className="badge bg-primary">similarity: {source.similarity}</span>
+
+                    <span className="badge bg-primary mb-2">similarity: {source.similarity}</span>
+
+                    <p className="small text-muted mt-2 mb-0">{source.excerpt}</p>
                   </div>
                 </div>
               ))}
