@@ -428,6 +428,116 @@ Workflow file:
 .github/workflows/quality-checks.yml
 ```
 
+## ☸️ Kubernetes Local Deployment
+
+The application can also be tested locally using Kubernetes through Docker Desktop Kubernetes or Minikube.
+
+This setup includes:
+
+- Frontend Deployment and Service
+- Backend Deployment and Service
+- PostgreSQL Deployment and Service
+- ConfigMap for application configuration
+- Kubernetes Secret for the OpenAI API key
+
+### 1. Enable Kubernetes
+
+If you use Docker Desktop:
+
+1. Open Docker Desktop
+2. Go to **Settings → Kubernetes**
+3. Enable **Kubernetes**
+4. Click **Apply & Restart**
+
+### 2. Build local Docker images
+
+From the project root directory run:
+
+```bash
+docker build -t algorithmlab-backend:latest ./backend
+docker build -t algorithmlab-frontend:latest ./frontend
+```
+
+### 3. Create a local Kubernetes secret
+
+Create a local file:
+
+`k8s/secret.yaml`
+
+Example:
+
+```yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: algorithmlab-secret
+  namespace: algorithmlab
+type: Opaque
+stringData:
+  OPENAI_API_KEY: your_real_openai_api_key
+```
+
+This file contains a real API key and should not be committed.
+
+Add it to `.gitignore`:
+
+`k8s/secret.yaml`
+
+The repository should only include:
+
+`k8s/secret.example.yaml`
+
+### 4. Apply Kubernetes manifests
+
+```bash
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/secret.yaml
+kubectl apply -f k8s/postgres-deployment.yaml
+kubectl apply -f k8s/postgres-service.yaml
+kubectl apply -f k8s/backend-deployment.yaml
+kubectl apply -f k8s/backend-service.yaml
+kubectl apply -f k8s/frontend-deployment.yaml
+kubectl apply -f k8s/frontend-service.yaml
+```
+
+### 5. Check Kubernetes resources
+
+```bash
+kubectl get pods -n algorithmlab
+kubectl get services -n algorithmlab
+```
+
+### 6. Access the application
+
+If NodePort works correctly:
+
+`http://localhost:30080`
+
+If not, use port forwarding.
+
+Frontend:
+
+```bash
+kubectl port-forward service/frontend-service 5173:5173 -n algorithmlab
+```
+
+Then open:
+
+`http://localhost:5173`
+
+Backend:
+
+```bash
+kubectl port-forward service/backend-service 5000:5000 -n algorithmlab
+```
+
+Then open:
+
+`http://localhost:5000/api-docs`
+
+This allows the full application to be tested locally on Kubernetes without deploying it to AWS.
+
 ## 🖼️ Favicon
 
 The application’s avatar (favicon) was generated using `Craion`, an AI-powered tool that creates images based on short text prompts. Craion uses generative models to produce graphics in various styles, making it easy to generate simple illustrations, icons, or visual concepts. The image used in this project was created specifically for the application and does not depict any real persons or objects.
@@ -460,6 +570,9 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 - Interactive API documentation with Swagger UI
 - Docker Compose local environment
 - Home navigation shortcut in navbar
+- Local Kubernetes deployment configuration
+- Kubernetes manifests for frontend, backend, and PostgreSQL
+- ConfigMap and Secret-based environment configuration
 
 ## 🏃‍♂️ Running the project
 
