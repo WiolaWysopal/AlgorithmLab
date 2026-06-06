@@ -126,8 +126,9 @@ The assistant uses algorithm descriptions stored in PostgreSQL as a knowledge ba
 
 Example question:
 
-````text
+```text
 Which sorting algorithm is adaptive and has O(n) best-case time complexity?
+```
 
 ### Supported Algorithms
 
@@ -142,7 +143,7 @@ Which sorting algorithm is adaptive and has O(n) best-case time complexity?
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
-````
+```
 
 The application uses the OpenAI API through LangChain to generate educational content dynamically.
 
@@ -301,8 +302,9 @@ Stored information:
 
 Recent conversations can be retrieved through:
 
-````http
+```http
 GET /ai/conversations
+```
 
 ## 🌐 Routing in React
 
@@ -354,7 +356,7 @@ Example:
 GET /algorithms/BubbleSort
 GET /algorithms/InsertionSort
 GET /algorithms/QuickSort
-````
+```
 
 ```bash
 POST /ai/explain
