@@ -39,6 +39,16 @@ async function initializeDatabase() {
     ALTER TABLE algorithms
     ADD COLUMN IF NOT EXISTS embedding JSONB;
   `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS ai_conversations (
+      id SERIAL PRIMARY KEY,
+      question TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      sources JSONB,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+  `);
 }
 
 // test endpoint
@@ -656,16 +666,55 @@ ${question}
 Return the answer in Markdown.
 `);
 
+    const sources = relevantAlgorithms.map((algorithm) => ({
+      name: algorithm.name,
+      similarity: Number(algorithm.score.toFixed(4)),
+      excerpt: algorithm.description.slice(0, 200) + "...",
+    }));
+
+    await pool.query(
+      `INSERT INTO ai_conversations (question, answer, sources)
+   VALUES ($1, $2, $3)`,
+      [question, response.content, JSON.stringify(sources)]
+    );
+
     res.json({
       answer: response.content,
-      sources: relevantAlgorithms.map((algorithm) => ({
-        name: algorithm.name,
-        similarity: Number(algorithm.score.toFixed(4)),
-        excerpt: algorithm.description.slice(0, 200) + "...",
-      })),
+      sources,
     });
   } catch (error) {
     console.error("RAG assistant error:", error);
+    res.status(500).json({
+      error: error.message,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /ai/conversations:
+ *   get:
+ *     summary: Get recent AI assistant conversations
+ *     tags:
+ *       - AI
+ *     responses:
+ *       200:
+ *         description: Recent AI conversations returned successfully
+ *       500:
+ *         description: Internal server error
+ */
+app.get("/ai/conversations", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT id, question, answer, sources, created_at
+      FROM ai_conversations
+      ORDER BY created_at DESC
+      LIMIT 10
+    `);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching AI conversations:", error);
     res.status(500).json({
       error: error.message,
     });

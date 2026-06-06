@@ -61,3 +61,11 @@ ON CONFLICT (name) DO UPDATE SET
 
 UPDATE algorithms
 SET embedding = NULL;
+
+CREATE TABLE IF NOT EXISTS ai_conversations (
+  id SERIAL PRIMARY KEY,
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  sources JSONB,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
