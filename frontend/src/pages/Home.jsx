@@ -69,6 +69,10 @@ function Home() {
             Explore algorithms
           </a>
 
+          <Link to="/ai-assistant" className="btn btn-success btn-lg">
+            Ask AI Assistant
+          </Link>
+
           <a
             href="http://localhost:5000/api-docs"
             className="btn btn-outline-dark btn-lg"

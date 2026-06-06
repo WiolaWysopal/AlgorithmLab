@@ -6,6 +6,7 @@ import SelectionSortVisualizer from "./components/SelectionSortVisualizer";
 import MergeSortVisualizer from "./components/MergeSortVisualizer";
 import QuickSortVisualizer from "./components/QuickSortVisualizer";
 import HeapSortVisualizer from "./components/HeapSortVisualizer";
+import AiAssistant from "./pages/AiAssistant";
 
 function App() {
   return (
@@ -24,6 +25,10 @@ function App() {
             AlgorithmLab
           </h1>
 
+          <Link to="/ai-assistant" className="me-4 text-white text-decoration-none fw-semibold">
+            AI Assistant
+          </Link>
+
           <Link to="/" className="ms-auto text-white text-decoration-none" title="Home">
             <i className="bi bi-house-fill fs-3"></i>
           </Link>
@@ -32,6 +37,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/ai-assistant" element={<AiAssistant />} />
         <Route path="/insertion-sort" element={<InsertionSortVisualizer />} />
         <Route path="/bubble-sort" element={<BubbleSortVisualizer />} />
         <Route path="/selection-sort" element={<SelectionSortVisualizer />} />
