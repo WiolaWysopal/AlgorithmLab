@@ -37,6 +37,10 @@ Users can generate detailed explanations for each implemented sorting algorithm 
 
 - AI-generated algorithm explanations
 - AI-generated quizzes for self-assessment
+- RAG-based AI assistant for algorithm questions
+- OpenAI embeddings for semantic search
+- PostgreSQL-stored algorithm knowledge base
+- Source attribution for AI-generated answers
 - Step-by-step analysis of the provided input array
 - Time and space complexity discussion
 - Practical use cases
@@ -93,6 +97,38 @@ Users can generate quizzes directly from the visualization page after exploring 
    - answer explanations.
 5. Quiz is displayed directly in the application.
 
+### RAG-Based AI Algorithm Assistant
+
+AlgorithmLab includes a Retrieval-Augmented Generation (RAG) assistant that answers natural language questions about sorting algorithms.
+
+The assistant uses algorithm descriptions stored in PostgreSQL as a knowledge base. For each algorithm, the backend generates OpenAI embeddings and stores them in the database. When a user asks a question, the system creates an embedding for the question, compares it with stored algorithm embeddings using cosine similarity, retrieves the most relevant algorithm descriptions, and sends them as context to the LLM through LangChain.
+
+### RAG Features
+
+- Natural language question answering
+- OpenAI embeddings
+- Semantic search over algorithm descriptions
+- PostgreSQL-based knowledge storage
+- Cosine similarity retrieval
+- LangChain-powered answer generation
+- Source attribution with similarity scores
+- Markdown-rendered AI responses
+
+### RAG Workflow
+
+1. User asks a question in the AI Assistant page.
+2. Backend generates an embedding for the question.
+3. Stored algorithm embeddings are retrieved from PostgreSQL.
+4. Cosine similarity is used to find the most relevant algorithm descriptions.
+5. Retrieved descriptions are passed as context to the LLM.
+6. The model generates a grounded answer.
+7. The frontend displays the answer together with retrieved sources.
+
+Example question:
+
+````text
+Which sorting algorithm is adaptive and has O(n) best-case time complexity?
+
 ### Supported Algorithms
 
 - Bubble Sort
@@ -106,7 +142,7 @@ Users can generate quizzes directly from the visualization page after exploring 
 
 ```env
 OPENAI_API_KEY=your_openai_api_key
-```
+````
 
 The application uses the OpenAI API through LangChain to generate educational content dynamically.
 
@@ -233,6 +269,7 @@ Benefits:
 - `/merge-sort` → Merge Sort Visualizer
 - `/quick-sort` → Quick Sort Visualizer
 - `/heap-sort` → Heap Sort Visualizer
+- `/ai-assistant` → RAG-based AI Algorithm Assistant
 
 - Each algorithm will eventually have its own route and visualizer component.
 
@@ -259,6 +296,11 @@ The backend provides `REST` endpoints for handling sorting and descriptions:
 - `POST /ai/quiz`
   - Receives algorithm name and input array
   - Generates an AI-powered quiz using LangChain and OpenAI
+
+- `POST /ai/ask`
+  - Receives a natural language question about sorting algorithms
+  - Generates a RAG-based answer using OpenAI embeddings, semantic search, PostgreSQL-stored algorithm knowledge, and LangChain
+  - Returns the answer with retrieved sources and similarity scores
 
 Example:
 
