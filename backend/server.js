@@ -36,6 +36,16 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 async function initializeDatabase() {
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS algorithms (
+      id INTEGER PRIMARY KEY,
+      created_at TIMESTAMPTZ NOT NULL,
+      name VARCHAR(100) UNIQUE NOT NULL,
+      description TEXT NOT NULL,
+      category VARCHAR(100) NOT NULL
+    );
+  `);
+
+  await pool.query(`
     ALTER TABLE algorithms
     ADD COLUMN IF NOT EXISTS embedding JSONB;
   `);
