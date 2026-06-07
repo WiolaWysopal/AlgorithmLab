@@ -191,6 +191,7 @@ AlgorithmLab/
 │
 ├─ k8s/
 │  ├─ namespace.yaml
+|  ├─ backend-hpa.yaml
 │  ├─ configmap.yaml
 │  ├─ secret.example.yaml
 │  ├─ postgres-pvc.yaml
@@ -497,6 +498,8 @@ This setup includes:
 - Namespace isolation for project resources
 - NGINX Ingress Controller
 - Ingress resource for frontend routing
+- Metrics Server for resource monitoring
+- Horizontal Pod Autoscaler (HPA) for backend autoscaling
 
 ### 1. Enable Kubernetes
 
@@ -633,6 +636,37 @@ Then access the application through:
 
 `http://algorithmlab.local`
 
+### 9. Horizontal Pod Autoscaling (HPA)
+
+AlgorithmLab includes a Horizontal Pod Autoscaler (HPA) for the backend service.
+
+The HPA automatically scales backend replicas based on CPU utilization.
+
+Configuration:
+
+```yaml
+minReplicas: 1
+maxReplicas: 5
+averageUtilization: 70
+```
+
+Check HPA status:
+
+```bash
+kubectl get hpa -n algorithmlab
+```
+
+Example output:
+
+```text
+NAME          REFERENCE            TARGETS
+backend-hpa   Deployment/backend   cpu: 0%/70%
+```
+
+The backend will automatically scale when CPU utilization exceeds the configured threshold.
+
+Metrics are provided by Kubernetes Metrics Server.
+
 ## 🖼️ Favicon
 
 The application’s avatar (favicon) was generated using `Craion`, an AI-powered tool that creates images based on short text prompts. Craion uses generative models to produce graphics in various styles, making it easy to generate simple illustrations, icons, or visual concepts. The image used in this project was created specifically for the application and does not depict any real persons or objects.
@@ -674,6 +708,9 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 - Kubernetes Deployments, Services, ConfigMaps, Secrets, and PersistentVolumeClaims
 - Persistent PostgreSQL storage using PersistentVolumeClaim (PVC)
 - Namespace-based resource isolation
+- Kubernetes Ingress for application routing
+- Metrics Server integration
+- Horizontal Pod Autoscaler (HPA) for backend autoscaling
 
 ## 🏃‍♂️ Running the project
 
