@@ -193,6 +193,7 @@ AlgorithmLab/
 │  ├─ namespace.yaml
 │  ├─ configmap.yaml
 │  ├─ secret.example.yaml
+│  ├─ postgres-pvc.yaml
 │  ├─ postgres-deployment.yaml
 │  ├─ postgres-service.yaml
 │  ├─ backend-deployment.yaml
@@ -489,8 +490,10 @@ This setup includes:
 - Frontend Deployment and Service
 - Backend Deployment and Service
 - PostgreSQL Deployment and Service
+- PersistentVolumeClaim (PVC) for PostgreSQL data persistence
 - ConfigMap for application configuration
 - Kubernetes Secret for the OpenAI API key
+- Namespace isolation for project resources
 
 ### 1. Enable Kubernetes
 
@@ -560,7 +563,32 @@ kubectl get pods -n algorithmlab
 kubectl get services -n algorithmlab
 ```
 
-### 6. Access the application
+### 6. PostgreSQL Persistent Storage
+
+AlgorithmLab uses a `PersistentVolumeClaim` (PVC) to persist PostgreSQL data across pod restarts and redeployments.
+
+Check the PVC status:
+
+```bash
+kubectl get pvc -n algorithmlab
+```
+
+Expected output:
+
+```text
+NAME           STATUS   CAPACITY
+postgres-pvc   Bound    1Gi
+```
+
+A `Bound` status indicates that PostgreSQL storage has been successfully provisioned and attached to the database pod.
+
+This ensures that database data survives:
+
+- PostgreSQL pod restarts
+- Deployment rollouts
+- Kubernetes pod recreation events
+
+### 7. Access the application
 
 If NodePort works correctly:
 
@@ -628,8 +656,9 @@ The application’s avatar (favicon) was generated using `Craion`, an AI-powered
 - Docker Compose local environment
 - Home navigation shortcut in navbar
 - Local Kubernetes deployment configuration
-- Kubernetes manifests for frontend, backend, and PostgreSQL
-- ConfigMap and Secret-based environment configuration
+- Kubernetes Deployments, Services, ConfigMaps, Secrets, and PersistentVolumeClaims
+- Persistent PostgreSQL storage using PersistentVolumeClaim (PVC)
+- Namespace-based resource isolation
 
 ## 🏃‍♂️ Running the project
 
