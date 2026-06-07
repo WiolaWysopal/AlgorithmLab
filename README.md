@@ -47,6 +47,9 @@ Users can generate detailed explanations for each implemented sorting algorithm 
 - Interview preparation questions
 - Knowledge-check questions with answers
 - Markdown-formatted responses
+- GitHub Actions CI pipeline
+- Automated Kubernetes manifest validation
+- Kubernetes schema verification using kubeconform
 
 ### Technology Stack
 
@@ -470,7 +473,9 @@ docker compose down
 
 This project uses GitHub Actions to automatically run quality checks on push and pull requests.
 
-The workflow checks:
+The workflows check:
+
+### Quality Checks
 
 - dependency installation
 - Prettier formatting
@@ -481,6 +486,18 @@ Workflow file:
 
 ```text
 .github/workflows/quality-checks.yml
+```
+
+### Kubernetes Validation
+
+- Kubernetes manifest validation
+- Schema verification using kubeconform
+- Validation of Deployments, Services, PVCs, Ingress, ConfigMaps, Secrets, and HPA manifests
+
+Workflow file:
+
+```text
+.github/workflows/kubernetess.yml
 ```
 
 ## ☸️ Kubernetes Local Deployment
