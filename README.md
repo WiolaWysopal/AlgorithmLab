@@ -199,6 +199,7 @@ AlgorithmLab/
 │  ├─ backend-deployment.yaml
 │  ├─ backend-service.yaml
 │  ├─ frontend-deployment.yaml
+|  ├─ ingress.yaml
 │  └─ frontend-service.yaml
 │
 ├─ docker-compose.yml
@@ -494,6 +495,8 @@ This setup includes:
 - ConfigMap for application configuration
 - Kubernetes Secret for the OpenAI API key
 - Namespace isolation for project resources
+- NGINX Ingress Controller
+- Ingress resource for frontend routing
 
 ### 1. Enable Kubernetes
 
@@ -617,6 +620,18 @@ Then open:
 `http://localhost:5000/api-docs`
 
 This allows the full application to be tested locally on Kubernetes without deploying it to AWS.
+
+### 8. Access via Ingress
+
+Add the following entry to your hosts file:
+
+```text
+127.0.0.1 algorithmlab.local
+```
+
+Then access the application through:
+
+`http://algorithmlab.local`
 
 ## 🖼️ Favicon
 
