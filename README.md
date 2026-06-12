@@ -20,6 +20,12 @@ AI-powered explanations, quiz generation, and RAG-based question answering built
 
 ![Application Demo](docs/algorithmlab_2.gif)
 
+### ☸️ Kubernetes Deployment
+
+Automated Kubernetes deployment with Deployments, Services, Persistent Volume Claims (PVC), Ingress routing, Horizontal Pod Autoscaling (HPA), ConfigMaps, Secrets, and Metrics Server integration. The entire environment can be provisioned using a single startup script.
+
+![Kubernetes Deployment Demo](docs/kubernetes.gif)
+
 ## 🛠 Technologies
 
 - **Frontend:** React + Vite
