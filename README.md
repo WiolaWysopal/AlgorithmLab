@@ -6,6 +6,20 @@ Its goal is to showcase practical knowledge of algorithms and the ability to imp
 
 Additionally, it integrates Large Language Models (LLMs) through LangChain and OpenAI to generate educational explanations and interview preparation content for users.
 
+## 🎥 Application Demo
+
+### 🧮 Sorting Algorithms Visualization
+
+Interactive visualization of Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, and Heap Sort with step-by-step execution.
+
+![Application Demo](docs/algorithmlab_1.gif)
+
+### 🤖 AI Learning Assistant
+
+AI-powered explanations, quiz generation, and RAG-based question answering built with OpenAI, LangChain, embeddings, and semantic search.
+
+![Application Demo](docs/algorithmlab_2.gif)
+
 ## 🛠 Technologies
 
 - **Frontend:** React + Vite
